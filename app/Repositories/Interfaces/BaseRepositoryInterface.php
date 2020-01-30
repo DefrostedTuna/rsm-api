@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 interface BaseRepositoryInterface {
 
     /**
+     * Fetches the model being usd throughout the instance.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getModel(): \Illuminate\Database\Eloquent\Model;
+
+    /**
      * Creates a record with the given attribute values.
      *
      * @param array $attributes

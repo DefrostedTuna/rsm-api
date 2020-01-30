@@ -9,11 +9,31 @@ use Illuminate\Database\Eloquent\Model;
 
 class LocationRepository implements LocationRepositoryInterface
 {
+    /**
+     * The instance of the model to use used.
+     *
+     * @var \Illuminate\Database\Eloquent\Model
+     */
     protected $model;
 
+    /**
+     * Sets the model to be used throughout the instance.
+     *
+     * @param Location $location
+     */
     public function __construct(Location $location)
     {
         $this->model = $location;
+    }
+
+    /**
+     * Fetches the model being usd throughout the instance.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getModel(): \Illuminate\Database\Eloquent\Model
+    {
+        return $this->model;
     }
 
     /**

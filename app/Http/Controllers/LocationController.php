@@ -48,7 +48,10 @@ class LocationController extends Controller
      */
     public function store(CreateLocationFormRequest $request): \Illuminate\Http\JsonResponse
     {
-        return new JsonResponse($this->locationRepository->create($request->input()), 201);
+        return new JsonResponse(
+            $this->locationRepository->create($request->only($this->locationRepository->getModel()->getFillable())), 
+            201
+        );
     }
 
     /**
@@ -73,7 +76,13 @@ class LocationController extends Controller
      */
     public function update(UpdateLocationFormRequest $request, String $locationId): \Illuminate\Http\JsonResponse
     {
-        return new JsonResponse($this->locationRepository->update($locationId, $request->toArray()), 200);
+        return new JsonResponse(
+            $this->locationRepository->update(
+                $locationId, 
+                $request->only($this->locationRepository->getModel()->getFillable())
+            ),
+            200
+        );
     }
 
     /**
