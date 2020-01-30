@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  rest-stop-map-api:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    container_name: rest-stop-map-api
+    volumes:
+      - ./:/app
+    working_dir: /app
+    env_file:
+      - .env
+    networks:
+      - uptilt
+
+networks:
+  uptilt:
+    external:
+      name: uptilt
