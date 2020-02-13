@@ -17,6 +17,11 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\Interfaces\LocationRepositoryInterface::class, 
             \App\Repositories\LocationRepository::class
         );
+        
+        $this->app->bind(
+            \App\Repositories\Interfaces\UserRepositoryInterface::class, 
+            \App\Repositories\UserRepository::class
+        );
     }
 
     /**

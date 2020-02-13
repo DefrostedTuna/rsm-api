@@ -43,7 +43,7 @@ class LocationRoutesTest extends TestCase
 
         $response->assertStatus(201);
         $this->assertEquals($storedLocation->toArray(), $response->getData(true));
-        // $response->assertJson($storedLocation->toArray());
+        $response->assertJson($storedLocation->toArray());
     }
 
     /** @test */

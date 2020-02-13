@@ -18,9 +18,9 @@ Route::get('/', function() {
     return 'Ok'; // There needs to be a status route configured for Kubernetes health checks.
 });
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('/register')->uses('AuthController@register');
+Route::post('/login')->uses('AuthController@login');
+Route::get('/logout')->uses('AuthController@logout')->middleware('auth');
 
 Route::resource('locations', 'LocationController')->only([
     'index',
