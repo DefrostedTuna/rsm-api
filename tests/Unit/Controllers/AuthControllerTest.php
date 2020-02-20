@@ -2,17 +2,35 @@
 
 namespace Tests\Unit\Controllers;
 
+use App\Events\Auth\Registered;
 use App\Http\Controllers\AuthController;
 use App\Http\Requests\RegisterNewUserFormRequest;
 use App\Models\User;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
-use Mockery;
 use Tests\TestCase;
 
 class AuthControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    /**
+     * Creates an instance of the Auth Controller.
+     *
+     * @param  mixed  $userRepositoryInterface
+     * @param  mixed  $guard
+     *
+     * @return \App\Controllers\AuthController
+     */
+    protected function authController($userRepositoryInterface = null, $guard = null): \App\Http\Controllers\AuthController
+    {
+        $userRepositoryInterface = $userRepositoryInterface ?: $this->app->make(UserRepositoryInterface::class);
+        $guard = $guard ?: $this->app->make(Guard::class);
+
+        return new AuthController($userRepositoryInterface, $guard);
+    }
 
     /** @test */
     public function it_can_register_a_new_user()
@@ -20,13 +38,10 @@ class AuthControllerTest extends TestCase
         $userInfo = [
             'username' => 'Artorias',
             'email' => 'artorias.abysswalker@oolacile.com',
-            'password' => 'GreatGreyWolfSif'
+            'password' => 'GreatGreyWolfSif',
         ];
 
-        $authController = new AuthController(
-            $this->app->make('App\Repositories\Interfaces\UserRepositoryInterface'),
-            $this->app->make('Illuminate\Contracts\Auth\Guard')
-        );
+        $authController = $this->authController();
 
         $authController->register(new RegisterNewUserFormRequest($userInfo));
 
@@ -42,13 +57,30 @@ class AuthControllerTest extends TestCase
         $userInfo = [
             'username' => 'Artorias',
             'email' => 'artorias.abysswalker@oolacile.com',
-            'password' => 'GreatGreyWolfSif'
+            'password' => 'GreatGreyWolfSif',
         ];
 
-        $authController = new AuthController(
-            $this->app->make('App\Repositories\Interfaces\UserRepositoryInterface'),
-            $this->app->make('Illuminate\Contracts\Auth\Guard')
-        );
+        $authController = $this->authController();
+
+        $response = $authController->register(new RegisterNewUserFormRequest($userInfo));
+
+        $this->assertArrayHasKey('access_token', $response->getData(true));
+        $this->assertArrayHasKey('token_type', $response->getData(true));
+        $this->assertArrayHasKey('expires_in', $response->getData(true));
+    }
+
+    /** @test */
+    public function it_fires_the_registered_event_when_a_user_is_created()
+    {
+        $this->expectsEvents(Registered::class);
+
+        $userInfo = [
+            'username' => 'Artorias',
+            'email' => 'artorias.abysswalker@oolacile.com',
+            'password' => 'GreatGreyWolfSif',
+        ];
+
+        $authController = $this->authController();
 
         $response = $authController->register(new RegisterNewUserFormRequest($userInfo));
 
@@ -60,20 +92,18 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_throws_an_exception_when_it_can_not_create_a_user()
     {
-        $userRepository = Mockery::mock($this->app->make('App\Repositories\Interfaces\UserRepositoryInterface'));
+        /** @var \Mockery\MockInterface|\App\Repositories\Interfaces\UserRepositoryInterface */
+        $userRepository = $this->mock(UserRepositoryInterface::class, function ($mock) {
+            $mock->shouldReceive('create')->once()->andThrow(new \Exception('You shall not pass!', 9001));
+        });
 
-        $userRepository->shouldReceive('create')->once()->andThrow(new \Exception('You shall not pass!', 9001));
-        
         $userInfo = [
             'username' => 'Artorias',
             'email' => 'artorias.abysswalker@oolacile.com',
-            'password' => 'GreatGreyWolfSif'
+            'password' => 'GreatGreyWolfSif',
         ];
 
-        $authController = new AuthController(
-            $userRepository,
-            $this->app->make('Illuminate\Contracts\Auth\Guard')
-        );
+        $authController = $this->authController($userRepository);
 
         $response = $authController->register(new RegisterNewUserFormRequest($userInfo));
 
@@ -87,10 +117,7 @@ class AuthControllerTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $authController = new AuthController(
-            $this->app->make('App\Repositories\Interfaces\UserRepositoryInterface'),
-            $this->app->make('Illuminate\Contracts\Auth\Guard')
-        );
+        $authController = $this->authController();
 
         $response = $authController->login(new Request([
             'username' => $user->username,
@@ -109,10 +136,7 @@ class AuthControllerTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $authController = new AuthController(
-            $this->app->make('App\Repositories\Interfaces\UserRepositoryInterface'),
-            $this->app->make('Illuminate\Contracts\Auth\Guard')
-        );
+        $authController = $this->authController();
 
         $response = $authController->login(new Request([
             'username' => $user->username,
@@ -130,10 +154,7 @@ class AuthControllerTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $authController = new AuthController(
-            $this->app->make('App\Repositories\Interfaces\UserRepositoryInterface'),
-            $this->app->make('Illuminate\Contracts\Auth\Guard')
-        );
+        $authController = $this->authController();
 
         $authController->login(new Request([
             'username' => $user->username,

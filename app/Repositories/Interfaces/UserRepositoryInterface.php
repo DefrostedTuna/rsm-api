@@ -8,7 +8,16 @@ interface UserRepositoryInterface {
      *
      * @param  array  $attributes
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return \App\Models\User
      */
-    public function create(array $attributes): \Illuminate\Database\Eloquent\Model;
+    public function create(array $attributes): \App\Models\User;
+
+    /**
+     * Finds and returns a record by its primary key.
+     *
+     * @param  string  $id
+     *
+     * @return \App\Models\User
+     */
+    public function findOrFail(string $id): \App\Models\User;
 }

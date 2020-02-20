@@ -1,8 +1,9 @@
 <?php
 
-namespace Tests\Feature\Routes;
+namespace Tests\Feature\Routes\Auth;
 
 use App\Models\User;
+use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -50,10 +51,12 @@ class AuthRoutesTest extends TestCase
     /** @test */
     public function it_throws_an_exception_when_it_can_not_create_a_user()
     {
-        $this->instance('App\Repositories\Interfaces\UserRepositoryInterface', 
-            $this->mock('App\Repositories\Interfaces\UserRepositoryInterface', function ($mock) {
-            $mock->shouldReceive('create')->once()->andThrow(new \Exception('You shall not pass!', 9001));
-        }));
+        $this->instance(
+            UserRepositoryInterface::class,
+            $this->mock(UserRepositoryInterface::class, function ($mock) {
+                $mock->shouldReceive('create')->once()->andThrow(new \Exception('You shall not pass!', 9001));
+            })
+        );
         
         $userInfo = [
             'username' => 'Artorias',
@@ -153,7 +156,7 @@ class AuthRoutesTest extends TestCase
 
         $responseSix->assertStatus(400);
         $responseSix->assertJson([
-            'error' => 'Too many login attempts'
+            'error' => 'Too many login attempts',
         ]);
         $this->isFalse($this->isAuthenticated());
     }

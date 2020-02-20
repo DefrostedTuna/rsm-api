@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Auth\Registered;
 use App\Http\Requests\RegisterNewUserFormRequest;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
@@ -39,11 +40,11 @@ class AuthController extends Controller
     /**
      * Instance of the authentication provider.
      * 
-     * This is type-hinted as JWTGuard instead of Illuminate\Contracts\Auth\Guard 
+     * This is type-hinted as JWTGuard alongside Illuminate\Contracts\Auth\Guard 
      * because tymon/jtw-auth has a class structure that does not completely fit
      * the default Guard contract.
      *
-     * @var \Tymon\JWTAuth\JWTGuard
+     * @var \Illuminate\Contracts\Auth\Guard|\Tymon\JWTAuth\JWTGuard
      */
     protected $auth;
 
@@ -72,7 +73,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Undocumented function
+     * Registers a new user and proceeds to log them in by issuing a JWT in response.
      *
      * @param  \App\Http\Requests\RegisterNewUserFormRequest  $request
      *
@@ -87,6 +88,8 @@ class AuthController extends Controller
                 'password',
             ]));
 
+            event(new Registered($user));
+                
             return $this->login($request);
         } catch (\Exception $e) {
             return new JsonResponse([

@@ -11,7 +11,7 @@ class UserRepository implements UserRepositoryInterface
     /**
      * The instance of the model to use used.
      *
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var \App\Models\User
      */
     protected $model;
 
@@ -30,18 +30,30 @@ class UserRepository implements UserRepositoryInterface
      *
      * @param  array  $attributes
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return \App\Models\User
      */
-    public function create(array $input): \Illuminate\Database\Eloquent\Model
+    public function create(array $attributes): \App\Models\User
     {
         $user = $this->model->newInstance();
 
         $user->fill([
-            'username' => $input['username'],
-            'email' => $input['email'],
-            'password' => bcrypt($input['password']),
+            'username' => $attributes['username'],
+            'email' => $attributes['email'],
+            'password' => bcrypt($attributes['password']),
         ])->save();
 
         return $user;
+    }
+
+    /**
+     * Finds and returns a record by its primary key.
+     *
+     * @param  string  $id
+     *
+     * @return \App\Models\User
+     */
+    public function findOrFail(string $id): \App\Models\User
+    {
+        return $this->model->findOrFail($id);
     }
 }

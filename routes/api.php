@@ -1,26 +1,20 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
-Route::get('/', function() {
+Route::get('/', function () {
     return 'Ok'; // There needs to be a status route configured for Kubernetes health checks.
 });
 
-Route::post('/register')->uses('AuthController@register');
-Route::post('/login')->uses('AuthController@login');
-Route::get('/logout')->uses('AuthController@logout')->middleware('auth');
+Route::post('/register')->uses('AuthController@register')->name('auth.register');
+Route::post('/login')->uses('AuthController@login')->name('auth.login');
+Route::get('/logout')->uses('AuthController@logout')->name('auth.logout')
+    ->middleware('auth');
+
+Route::get('/email/verify/{id}/{hash}')->uses('Auth\VerificationController@verify')->name('verification.verify')
+    ->middleware(['signed', 'throttle:6,1']);
+Route::post('/email/resend', 'Auth\VerificationController@resend')->name('verification.resend')
+    ->middleware(['auth', 'throttle:6,1']);
 
 Route::resource('locations', 'LocationController')->only([
     'index',

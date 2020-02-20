@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
+use App\Contracts\Auth\MustVerifyEmail;
+use App\Traits\Auth\MustVerifyEmail as VerifiesEmail;
 use App\Traits\Uuids;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use Notifiable, Uuids;
+    use Notifiable, Uuids, VerifiesEmail;
 
-    /** 
+    /**
      * The table associated with the model.
      *
      * @var string
@@ -60,7 +61,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 
+        'password',
         'remember_token',
         'created_at',
         'updated_at',
