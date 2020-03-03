@@ -2,31 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\Services\LocationService;
 use App\Http\Requests\CreateLocationFormRequest;
 use App\Http\Requests\UpdateLocationFormRequest;
-use App\Repositories\Interfaces\LocationRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
     /**
-     * Instance of the Location Model.
+     * Instance of the Location Service.
      *
-     * @var \App\Repositories\Interfaces\LocationRepositoryInterface $locationRepository
+     * @var \App\Contracts\Services\LocationService $locationService
      */
-    protected $locationRepository;
+    protected $locationService;
 
     /**
-     * Sets the LocationRepository instance to be used throughout the controller.
+     * Create a new LocationController instance.
      *
-     * @param \App\Repositories\Interfaces\LocationRepository $locationRepository
-     * 
+     * @param \App\Contracts\Services\LocationService $locationService
+     *
      * @return void
      */
-    public function __construct(LocationRepositoryInterface $locationRepository)
+    public function __construct(LocationService $locationService)
     {
-        $this->locationRepository = $locationRepository;
+        $this->locationService = $locationService;
     }
 
     /**
@@ -34,22 +34,22 @@ class LocationController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(): JsonResponse
     {
-        return new JsonResponse($this->locationRepository->all(), 200);
+        return new JsonResponse($this->locationService->all(), 200);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param App\Http\Requests\CreateLocationFormRequest $request
-     * 
+     * @param  \App\Http\Requests\CreateLocationFormRequest  $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CreateLocationFormRequest $request): \Illuminate\Http\JsonResponse
+    public function store(CreateLocationFormRequest $request): JsonResponse
     {
         return new JsonResponse(
-            $this->locationRepository->create($request->only($this->locationRepository->getModel()->getFillable())), 
+            $this->locationService->create($request->validated()),
             201
         );
     }
@@ -57,29 +57,29 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param String $locationId
-     * 
+     * @param  string  $locationId
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(String $locationId): \Illuminate\Http\JsonResponse
+    public function show(string $locationId): JsonResponse
     {
-        return new JsonResponse($this->locationRepository->findOrFail($locationId), 200);
+        return new JsonResponse($this->locationService->findOrFail($locationId), 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param App\Http\Requests\UpdateLocationFormRequest $request
-     * @param String $locationId
-     * 
+     * @param  \App\Http\Requests\UpdateLocationFormRequest $request
+     * @param  string                                       $locationId
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateLocationFormRequest $request, String $locationId): \Illuminate\Http\JsonResponse
+    public function update(UpdateLocationFormRequest $request, string $locationId): JsonResponse
     {
         return new JsonResponse(
-            $this->locationRepository->update(
-                $locationId, 
-                $request->only($this->locationRepository->getModel()->getFillable())
+            $this->locationService->update(
+                $locationId,
+                $request->validated()
             ),
             200
         );
@@ -88,12 +88,12 @@ class LocationController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param String $locationId
+     * @param  string  $locationId
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(String $locationId): \Illuminate\Http\JsonResponse
+    public function destroy(string $locationId): JsonResponse
     {
-        return new JsonResponse($this->locationRepository->delete($locationId), 200);
+        return new JsonResponse($this->locationService->delete($locationId), 200);
     }
 }

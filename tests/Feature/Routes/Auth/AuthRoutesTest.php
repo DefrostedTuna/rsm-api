@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Routes\Auth;
 
+use App\Contracts\Services\UserService;
 use App\Models\User;
-use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -52,8 +52,8 @@ class AuthRoutesTest extends TestCase
     public function it_throws_an_exception_when_it_can_not_create_a_user()
     {
         $this->instance(
-            UserRepositoryInterface::class,
-            $this->mock(UserRepositoryInterface::class, function ($mock) {
+            UserService::class,
+            $this->mock(UserService::class, function ($mock) {
                 $mock->shouldReceive('create')->once()->andThrow(new \Exception('You shall not pass!', 9001));
             })
         );

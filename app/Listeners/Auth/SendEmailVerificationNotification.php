@@ -2,8 +2,8 @@
 
 namespace App\Listeners\Auth;
 
-use App\Events\Auth\Registered;
 use App\Contracts\Auth\MustVerifyEmail;
+use App\Events\Auth\Registered;
 
 class SendEmailVerificationNotification
 {

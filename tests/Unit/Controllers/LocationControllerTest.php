@@ -2,12 +2,11 @@
 
 namespace Tests\Unit\Controllers;
 
+use App\Contracts\Services\LocationService;
 use App\Http\Controllers\LocationController;
 use App\Http\Requests\CreateLocationFormRequest;
 use App\Http\Requests\UpdateLocationFormRequest;
 use App\Models\Location;
-use App\Repositories\Interfaces\LocationRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -20,7 +19,7 @@ class LocationControllerTest extends TestCase
     {
         $locations = factory(Location::class, 10)->create();
 
-        $locationController = new LocationController($this->app->make(LocationRepositoryInterface::class));
+        $locationController = new LocationController($this->app->make(LocationService::class));
 
         $response = $locationController->index();
 
@@ -32,7 +31,7 @@ class LocationControllerTest extends TestCase
     {
         $location = factory(Location::class)->create();
 
-        $locationController = new LocationController($this->app->make(LocationRepositoryInterface::class));
+        $locationController = new LocationController($this->app->make(LocationService::class));
 
         $response = $locationController->show($location->id);
 
@@ -40,13 +39,18 @@ class LocationControllerTest extends TestCase
     }
 
     /** @test */
-    public function it_can_store_a_location() 
+    public function it_can_store_a_location()
     {
         $location = factory(Location::class)->make();
 
-        $locationController = new LocationController($this->app->make(LocationRepositoryInterface::class));
+        /** @var \App\Http\Requests\CreateLocationFormRequest */
+        $request = $this->mock(CreateLocationFormRequest::class, function ($mock) use ($location) {
+            $mock->shouldReceive('validated')->andReturn($location->toArray());
+        });
 
-        $response = $locationController->store(new CreateLocationFormRequest($location->toArray()));
+        $locationController = new LocationController($this->app->make(LocationService::class));
+
+        $response = $locationController->store($request);
 
         $record = (new Location())->first(); // There should only be one record.
         
@@ -96,9 +100,14 @@ class LocationControllerTest extends TestCase
             ],
         ];
 
-        $locationController = new LocationController($this->app->make(LocationRepositoryInterface::class));
+        /** @var \App\Http\Requests\UpdateLocationFormRequest */
+        $request = $this->mock(UpdateLocationFormRequest::class, function ($mock) use ($attributes) {
+            $mock->shouldReceive('validated')->andReturn($attributes);
+        });
 
-        $response = $locationController->update(new UpdateLocationFormRequest($attributes), $location->id);
+        $locationController = new LocationController($this->app->make(LocationService::class));
+
+        $response = $locationController->update($request, $location->id);
 
         $updatedLocation = (new Location())->first();
 
@@ -110,7 +119,7 @@ class LocationControllerTest extends TestCase
     {
         $location = factory(Location::class)->create();
 
-        $locationController = new LocationController($this->app->make(LocationRepositoryInterface::class));
+        $locationController = new LocationController($this->app->make(LocationService::class));
 
         $locationController->destroy($location->id);
 
