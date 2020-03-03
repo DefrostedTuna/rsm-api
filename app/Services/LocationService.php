@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Services;
 
+use App\Contracts\Services\LocationService as LocationServiceContract;
 use App\Models\Location;
-use App\Repositories\Interfaces\LocationRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class LocationRepository implements LocationRepositoryInterface
+class LocationService implements LocationServiceContract
 {
     /**
      * The instance of the model to use used.
@@ -19,7 +19,7 @@ class LocationRepository implements LocationRepositoryInterface
     /**
      * Sets the model to be used throughout the instance.
      *
-     * @param Location $location
+     * @param  Location  $location
      */
     public function __construct(Location $location)
     {
@@ -31,7 +31,7 @@ class LocationRepository implements LocationRepositoryInterface
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function getModel(): \Illuminate\Database\Eloquent\Model
+    public function getModel(): Model
     {
         return $this->model;
     }
@@ -39,11 +39,11 @@ class LocationRepository implements LocationRepositoryInterface
     /**
      * Creates a record with the given attribute values.
      *
-     * @param array $attributes
+     * @param  array  $attributes
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function create(Array $input): \Illuminate\Database\Eloquent\Model
+    public function create(array $input): Model
     {
         $location = $this->model->newInstance();
 
@@ -57,10 +57,10 @@ class LocationRepository implements LocationRepositoryInterface
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function all(): \Illuminate\Database\Eloquent\Collection
+    public function all(): Collection
     {
         // If pagination is required, parameters can be passed to a paginate function to indicate how many records to
-        // return for each query, while also indicating the page number (or offset) 
+        // return for each query, while also indicating the page number (or offset)
         // in which to apply the context.
 
         return $this->model->all();
@@ -69,24 +69,24 @@ class LocationRepository implements LocationRepositoryInterface
     /**
      * Finds and returns a record by its primary key.
      *
-     * @param String $id
+     * @param  string  $id
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function findOrFail(String $id): \Illuminate\Database\Eloquent\Model
+    public function findOrFail(string $id): Model
     {
         return $this->model->findOrFail($id);
     }
 
     /**
      * Updates a record with the given attribute values.
-     *  
-     * @param String $locationId
-     * @param Array $attributes
+     *
+     * @param  string  $locationId
+     * @param  array   $attributes
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function update(String $locationId, Array $attributes): \Illuminate\Database\Eloquent\Model
+    public function update(string $locationId, array $attributes): Model
     {
         $location = $this->findOrFail($locationId);
 
@@ -98,11 +98,11 @@ class LocationRepository implements LocationRepositoryInterface
     /**
      * Deletes a record from the system identified by its primary key.
      *
-     * @param String $id
+     * @param  string  $id
      *
-     * @return Bool
+     * @return bool
      */
-    public function delete(String $locationId): Bool
+    public function delete(string $locationId): bool
     {
         // TODO: Create a check to make sure only administrators can delete a location.
         $location = $this->findOrFail($locationId);

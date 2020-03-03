@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Contracts\Services;
 
-interface UserRepositoryInterface {
+use App\Models\User;
+
+interface UserService
+{
     /**
      * Creates a record with the given attribute values.
      *
@@ -10,7 +13,7 @@ interface UserRepositoryInterface {
      *
      * @return \App\Models\User
      */
-    public function create(array $attributes): \App\Models\User;
+    public function create(array $attributes): User;
 
     /**
      * Finds and returns a record by its primary key.
@@ -19,5 +22,5 @@ interface UserRepositoryInterface {
      *
      * @return \App\Models\User
      */
-    public function findOrFail(string $id): \App\Models\User;
+    public function findOrFail(string $id): User;
 }

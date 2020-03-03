@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Services;
 
-use App\Models\User;
-use App\Repositories\Interfaces\UserRepositoryInterface;
-use Illuminate\Database\Eloquent\Model;
+use App\Contracts\Services\UserService as UserServiceContract;
+use App\Models\User as User;
 
-class UserRepository implements UserRepositoryInterface
+class UserService implements UserServiceContract
 {
     /**
      * The instance of the model to use used.
@@ -32,7 +31,7 @@ class UserRepository implements UserRepositoryInterface
      *
      * @return \App\Models\User
      */
-    public function create(array $attributes): \App\Models\User
+    public function create(array $attributes): User
     {
         $user = $this->model->newInstance();
 
@@ -52,7 +51,7 @@ class UserRepository implements UserRepositoryInterface
      *
      * @return \App\Models\User
      */
-    public function findOrFail(string $id): \App\Models\User
+    public function findOrFail(string $id): User
     {
         return $this->model->findOrFail($id);
     }

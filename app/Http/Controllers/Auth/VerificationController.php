@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Contracts\Services\UserService;
 use App\Events\Auth\Verified;
 use App\Http\Controllers\Controller;
-use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,20 +12,22 @@ use Illuminate\Http\Request;
 class VerificationController extends Controller
 {
     /**
-     * Instance of the User Repository.
+     * Instance of the User Service.
      *
-     * @var \App\Repositories\Interfaces\UserRepositoryInterface
+     * @var \App\Contracts\Services\UserService
      */
-    protected $userRepository;
+    protected $userService;
 
     /**
      * Create a new controller instance.
      *
+     * @param  \App\Contracts\Services\UserService  $userService
+     *
      * @return void
      */
-    public function __construct(UserRepositoryInterface $userRepository)
+    public function __construct(UserService $userService)
     {
-        $this->userRepository = $userRepository;
+        $this->userService = $userService;
     }
 
     /**
@@ -37,10 +39,10 @@ class VerificationController extends Controller
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function verify(Request $request): \Illuminate\Http\JsonResponse
+    public function verify(Request $request): JsonResponse
     {
         try {
-            $user = $this->userRepository->findOrFail($request->route('id'));
+            $user = $this->userService->findOrFail($request->route('id'));
 
             if (! hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
                 throw new AuthorizationException;
@@ -70,8 +72,12 @@ class VerificationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      *
      * @return \Illuminate\Http\Response
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     *
+     * @todo Potentially extract this into the UserService to keep functionality away from the controller.
      */
-    public function resend(Request $request)
+    public function resend(Request $request): JsonResponse
     {
         /** @var \App\Models\User */
         if (! $user = $request->user()) {

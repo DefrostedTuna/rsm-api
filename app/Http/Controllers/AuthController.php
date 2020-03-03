@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\Services\UserService;
 use App\Events\Auth\Registered;
 use App\Http\Requests\RegisterNewUserFormRequest;
-use App\Repositories\Interfaces\UserRepositoryInterface;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\JWT;
 
@@ -31,16 +30,16 @@ class AuthController extends Controller
     protected $decayMinutes = 1;
 
     /**
-     * Instance of the User Repository to be used.
+     * Instance of the User Service to be used.
      *
-     * @var \App\Repositories\Interfaces\UserRepositoryInterface
+     * @var \App\Contracts\Services\UserService
      */
-    protected $userRepository;
+    protected $userService;
 
     /**
      * Instance of the authentication provider.
-     * 
-     * This is type-hinted as JWTGuard alongside Illuminate\Contracts\Auth\Guard 
+     *
+     * This is type-hinted as JWTGuard alongside Illuminate\Contracts\Auth\Guard
      * because tymon/jtw-auth has a class structure that does not completely fit
      * the default Guard contract.
      *
@@ -51,12 +50,14 @@ class AuthController extends Controller
     /**
      * Create a new AuthController instance.
      *
-     * @param  \Repositories\Interfaces\UserRepositoryInterface  $user
-     * @param  \Illuminate\Contracts\Auth\Guard  $auth
+     * @param  \App\Contracts\Services\UserService  $user
+     * @param  \Illuminate\Contracts\Auth\Guard     $auth
+     *
+     * @return void
      */
-    public function __construct(UserRepositoryInterface $user, Guard $auth)
+    public function __construct(UserService $user, Guard $auth)
     {
-        $this->userRepository = $user;
+        $this->userService = $user;
         $this->auth = $auth;
 
         // $this->middleware('auth:api', ['except' => ['login']]);
@@ -79,10 +80,10 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register(RegisterNewUserFormRequest $request): \Illuminate\Http\JsonResponse
+    public function register(RegisterNewUserFormRequest $request): JsonResponse
     {
         try {
-            $user = $this->userRepository->create($request->only([
+            $user = $this->userService->create($request->only([
                 'username',
                 'email',
                 'password',
@@ -102,10 +103,10 @@ class AuthController extends Controller
      * Get a JWT via given credentials.
      *
      * @param  \Illuminate\Http\Request  $request
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request): \Illuminate\Http\JsonResponse
+    public function login(Request $request): JsonResponse
     {
         $credentials = $request->only(['email', 'password']);
 
@@ -113,13 +114,13 @@ class AuthController extends Controller
             $this->fireLockoutEvent($request);
 
             return new JsonResponse([
-                'error' => 'Too many login attempts'
+                'error' => 'Too many login attempts',
             ], 400);
         }
 
         $token = $this->auth->attempt($credentials);
 
-        if (!$token) {
+        if (! $token) {
             $this->incrementLoginAttempts($request);
 
             return new JsonResponse(['error' => 'Unauthorized'], 401);
@@ -130,10 +131,10 @@ class AuthController extends Controller
 
     /**
      * Log the user out (Invalidate the token).
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout(): \Illuminate\Http\JsonResponse
+    public function logout(): JsonResponse
     {
         // The token will be auto-magically retrieved from the request.
         // We also want to blacklist the token so that it may not be used in the future.
@@ -149,12 +150,12 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken(string $token): \Illuminate\Http\JsonResponse
+    protected function respondWithToken(string $token): JsonResponse
     {
         return new JsonResponse([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => $this->auth->factory()->getTTL() * 60
+            'expires_in' => $this->auth->factory()->getTTL() * 60,
         ], 200);
     }
 }

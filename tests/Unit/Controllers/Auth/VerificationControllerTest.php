@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Controllers\Auth;
 
+use App\Contracts\Services\UserService;
 use App\Events\Auth\Verified;
-use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\Auth\VerificationController;;
 use App\Models\User;
-use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -35,7 +35,7 @@ class VerificationControllerTest extends TestCase
             return $route;
         });
 
-        $controller = new VerificationController($this->app->make(UserRepositoryInterface::class));
+        $controller = new VerificationController($this->app->make(UserService::class));
         $response = $controller->verify($request);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -65,7 +65,7 @@ class VerificationControllerTest extends TestCase
             return $route;
         });
 
-        $controller = new VerificationController($this->app->make(UserRepositoryInterface::class));
+        $controller = new VerificationController($this->app->make(UserService::class));
         $response = $controller->verify($request);
     }
 
@@ -85,7 +85,7 @@ class VerificationControllerTest extends TestCase
             return $route;
         });
 
-        $controller = new VerificationController($this->app->make(UserRepositoryInterface::class));
+        $controller = new VerificationController($this->app->make(UserService::class));
         $response = $controller->verify($request);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -115,7 +115,7 @@ class VerificationControllerTest extends TestCase
             return $route;
         });
 
-        $controller = new VerificationController($this->app->make(UserRepositoryInterface::class));
+        $controller = new VerificationController($this->app->make(UserService::class));
         $response = $controller->verify($request);
 
         Event::assertDispatched(Verified::class);
@@ -133,7 +133,7 @@ class VerificationControllerTest extends TestCase
             $mock->shouldReceive('user')->andReturn($user);
         });
         
-        $controller = new VerificationController($this->app->make(UserRepositoryInterface::class));
+        $controller = new VerificationController($this->app->make(UserService::class));
         $response = $controller->resend($req);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -151,7 +151,7 @@ class VerificationControllerTest extends TestCase
         $req = $this->mock(Request::class, function ($mock) use ($user) {
             $mock->shouldReceive('user')->andReturn($user);
         });
-        $controller = new VerificationController($this->app->make(UserRepositoryInterface::class));
+        $controller = new VerificationController($this->app->make(UserService::class));
         $response = $controller->resend($req);
 
         $this->assertEquals(403, $response->getStatusCode());
@@ -165,7 +165,7 @@ class VerificationControllerTest extends TestCase
     {
         $this->expectException(AuthorizationException::class);
 
-        $controller = new VerificationController($this->app->make(UserRepositoryInterface::class));
+        $controller = new VerificationController($this->app->make(UserService::class));
         $response = $controller->resend(new Request());
     }
 }

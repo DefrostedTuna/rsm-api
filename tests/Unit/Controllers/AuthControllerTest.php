@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Controllers;
 
+use App\Contracts\Services\UserService;
 use App\Events\Auth\Registered;
 use App\Http\Controllers\AuthController;
 use App\Http\Requests\RegisterNewUserFormRequest;
 use App\Models\User;
-use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -26,7 +26,7 @@ class AuthControllerTest extends TestCase
      */
     protected function authController($userRepositoryInterface = null, $guard = null): \App\Http\Controllers\AuthController
     {
-        $userRepositoryInterface = $userRepositoryInterface ?: $this->app->make(UserRepositoryInterface::class);
+        $userRepositoryInterface = $userRepositoryInterface ?: $this->app->make(UserService::class);
         $guard = $guard ?: $this->app->make(Guard::class);
 
         return new AuthController($userRepositoryInterface, $guard);
@@ -92,8 +92,8 @@ class AuthControllerTest extends TestCase
     /** @test */
     public function it_throws_an_exception_when_it_can_not_create_a_user()
     {
-        /** @var \Mockery\MockInterface|\App\Repositories\Interfaces\UserRepositoryInterface */
-        $userRepository = $this->mock(UserRepositoryInterface::class, function ($mock) {
+        /** @var \Mockery\MockInterface|\App\Repositories\Interfaces\UserService */
+        $userRepository = $this->mock(UserService::class, function ($mock) {
             $mock->shouldReceive('create')->once()->andThrow(new \Exception('You shall not pass!', 9001));
         });
 
