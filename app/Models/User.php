@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\Auth\ResetPassword;
 use App\Traits\Auth\MustVerifyEmail as VerifiesEmail;
 use App\Traits\Uuids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -99,5 +100,17 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * 
+     * @return void
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPassword($token));
     }
 }

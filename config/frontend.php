@@ -27,6 +27,7 @@ return [
     */
 
     'routes' => [
-        'email_verification' => env('EMAIL_VERIFICATION_ROUTE', '/email/verify?verificationUrl='),
+        'email_verification' => '/email/verify?verificationUrl=',
+        'password_reset' => '/password/reset'
     ],
 ];

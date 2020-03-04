@@ -50,7 +50,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if (in_array('api', $request->route()->middleware())) {
+        if ($request->route() && in_array('api', $request->route()->middleware())) {
             $request->headers->set('Accept', 'application/json');
         }
 

@@ -23,4 +23,14 @@ interface UserService
      * @return \App\Models\User
      */
     public function findOrFail(string $id): User;
+
+    /**
+     * Sets the given User's password to the provided value.
+     *
+     * @param  \App\Models\User  $user
+     * @param  string            $password
+     *
+     * @return \App\Models\User
+     */
+    public function setPassword(User $user, string $password): User;
 }

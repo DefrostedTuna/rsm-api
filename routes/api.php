@@ -13,8 +13,13 @@ Route::get('/logout')->uses('AuthController@logout')->name('auth.logout')
 
 Route::get('/email/verify/{id}/{hash}')->uses('Auth\VerificationController@verify')->name('verification.verify')
     ->middleware(['signed', 'throttle:6,1']);
-Route::post('/email/resend', 'Auth\VerificationController@resend')->name('verification.resend')
+Route::post('/email/resend')->uses('Auth\VerificationController@resend')->name('verification.resend')
     ->middleware(['auth', 'throttle:6,1']);
+
+Route::post('/password/email')->uses('Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email')
+    ->middleware(['guest', 'throttle:6,1']);
+Route::post('/password/reset')->uses('Auth\ResetPasswordController@reset')->name('password.reset')
+    ->middleware(['guest', 'throttle:6,1']);
 
 Route::resource('locations', 'LocationController')->only([
     'index',
