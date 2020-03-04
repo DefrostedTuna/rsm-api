@@ -2,39 +2,102 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Contracts\Services\AuthService;
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
-    use AuthenticatesUsers;
+    use ThrottlesLogins;
 
     /**
-     * Where to redirect users after login.
+     * The maximum number of login attempts to allow.
      *
-     * @var string
+     * @var integer
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $maxAttempts = 5;
 
     /**
-     * Create a new controller instance.
+     * The number of minutes to throttle for.
      *
+     * @var integer
+     */
+    protected $decayMinutes = 1;
+
+    /**
+     * The instance of the Auth Service.
+     *
+     * @var \App\Contracts\Services\AuthService
+     */
+    protected $authService;
+
+    /**
+     * Create a new LoginController instance.
+     *
+     * @param  \App\Contracts\Services\AuthService  $authService
+     * 
      * @return void
      */
-    public function __construct()
+    public function __construct(AuthService $authService)
     {
-        $this->middleware('guest')->except('logout');
+        $this->authService = $authService;
+    }
+
+    /**
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+     */
+    public function username(): string
+    {
+        return 'email';
+    }
+
+    /**
+     * Get a JWT via given credentials.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(Request $request): JsonResponse
+    {
+        $credentials = $request->only(['email', 'password']);
+
+        if ($this->hasTooManyLoginAttempts($request)) {
+            $this->fireLockoutEvent($request);
+
+            return new JsonResponse([
+                'error' => 'Too many login attempts',
+            ], 400);
+        }
+
+        try {
+            $data = $this->authService->attemptLoginWithCredentials($credentials);
+
+            return new JsonResponse([
+                'access_token' => $data['access_token'],
+                'token_type' => 'bearer',
+                'expires_in' => $data['expires_in'],
+            ], 200);
+        } catch (\Exception $e) {
+            $this->incrementLoginAttempts($request);
+            
+            return new JsonResponse(['error' => 'Unauthorized'], 401);
+        }
+    }
+
+    /**
+     * Invalidate the user token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(): JsonResponse
+    {
+        $this->authService->logout(true);
+
+        return new JsonResponse(['message' => 'Success'], 200);
     }
 }

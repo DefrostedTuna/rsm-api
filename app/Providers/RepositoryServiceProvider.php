@@ -14,14 +14,20 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            \App\Contracts\Services\LocationService::class, 
-            \App\Services\LocationService::class,
+            \App\Contracts\Services\AuthService::class,
+            \App\Services\AuthService::class
         );
-        
+
         $this->app->bind(
             \App\Contracts\Services\UserService::class, 
             \App\Services\UserService::class,
         );
+
+        $this->app->bind(
+            \App\Contracts\Services\LocationService::class, 
+            \App\Services\LocationService::class,
+        );
+        
     }
 
     /**

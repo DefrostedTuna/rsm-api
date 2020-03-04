@@ -6,9 +6,9 @@ Route::get('/', function () {
     return 'Ok'; // There needs to be a status route configured for Kubernetes health checks.
 });
 
-Route::post('/register')->uses('AuthController@register')->name('auth.register');
-Route::post('/login')->uses('AuthController@login')->name('auth.login');
-Route::get('/logout')->uses('AuthController@logout')->name('auth.logout')
+Route::post('/register')->uses('Auth\RegisterController@register')->name('auth.register');
+Route::post('/login')->uses('Auth\LoginController@login')->name('auth.login');
+Route::get('/logout')->uses('Auth\LoginController@logout')->name('auth.logout')
     ->middleware('auth');
 
 Route::get('/email/verify/{id}/{hash}')->uses('Auth\VerificationController@verify')->name('verification.verify')
