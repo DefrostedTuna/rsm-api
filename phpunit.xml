@@ -25,9 +25,11 @@
             <!-- Exclude the default, unmodified Laravel files until they are used. -->
             <!-- These files do not have code coverage out of the box -->
             <exclude>
-              <directory suffix=".php">./app/Http/Controllers/Auth</directory>
               <directory suffix=".php">./app/Http/Middleware</directory>
               <directory suffix=".php">./app/Providers</directory>
+              <file>./app/Http/Controllers/Auth/ConfirmPasswordController.php</file>
+              <file>./app/Http/Controllers/Auth/LoginController.php</file>
+              <file>./app/Http/Controllers/Auth/RegisterController.php</file>
               <file>./app/Exceptions/Handler.php</file>
               <file>./app/Console/Kernel.php</file>
               <file>./app/Http/Controllers/Controller.php</file>

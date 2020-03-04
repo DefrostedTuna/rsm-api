@@ -10,12 +10,18 @@ class EventServiceProvider extends ServiceProvider
      * The event listener mappings for the application.
      *
      * @var array
+     *
+     * @todo Send an email when a user is verified.
+     * @todo Send an email when a password is changed.
      */
     protected $listen = [
         'App\Events\Auth\Registered' => [
             'App\Listeners\Auth\SendEmailVerificationNotification',
         ],
         'App\Events\Auth\Verified' => [
+            // Listeners here...
+        ],
+        'App\Events\Auth\PasswordChanged' => [
             // Listeners here...
         ],
     ];

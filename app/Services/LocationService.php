@@ -19,21 +19,13 @@ class LocationService implements LocationServiceContract
     /**
      * Sets the model to be used throughout the instance.
      *
-     * @param  Location  $location
+     * @param  \App\Models\Location  $location
+     * 
+     * @return void
      */
     public function __construct(Location $location)
     {
         $this->model = $location;
-    }
-
-    /**
-     * Fetches the model being usd throughout the instance.
-     *
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function getModel(): Model
-    {
-        return $this->model;
     }
 
     /**
