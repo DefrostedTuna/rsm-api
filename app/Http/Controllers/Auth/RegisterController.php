@@ -2,72 +2,62 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Contracts\Services\AuthService;
+use App\Contracts\Services\UserService;
+use App\Events\Auth\Registered;
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\RegisterNewUserFormRequest;
+use Illuminate\Http\JsonResponse;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
-
-    use RegistersUsers;
-
     /**
-     * Where to redirect users after registration.
+     * Instance of the User Service.
      *
-     * @var string
+     * @var \App\Contracts\Services\UserService
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $userService;
 
     /**
-     * Create a new controller instance.
+     * Instance of the Auth Service.
+     *
+     * @var \App\Contracts\Services\AuthService
+     */
+    protected $authService;
+
+    /**
+     * Create a new RegisterController instance.
+     *
+     * @param  \App\Contracts\Services\UserService  $userService
+     * @param  \App\Contracts\Services\AuthService  $authService
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserService $userService, AuthService $authService)
     {
-        $this->middleware('guest');
+        $this->userService = $userService;
+        $this->authService = $authService;
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
+    public function register(RegisterNewUserFormRequest $request): JsonResponse
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
-    }
+        try {
+            $user = $this->userService->create($request->validated());
+            $credentials = $request->only(['email', 'password']);
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\User
-     */
-    protected function create(array $data)
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+            event(new Registered($user));
+
+            $data = $this->authService->attemptLoginWithCredentials($credentials);
+
+            return new JsonResponse([
+                'access_token' => $data['access_token'],
+                'token_type' => 'bearer',
+                'expires_in' => $data['expires_in'],
+            ], 200);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => 'There was an error creating the account',
+            ], 500);
+        }
     }
 }
