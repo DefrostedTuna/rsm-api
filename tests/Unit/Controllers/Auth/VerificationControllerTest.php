@@ -35,7 +35,8 @@ class VerificationControllerTest extends TestCase
             return $route;
         });
 
-        $controller = new VerificationController($this->app->make(UserService::class));
+        $userService = $this->app->make(UserService::class);
+        $controller = new VerificationController($userService);
         $response = $controller->verify($request);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -65,7 +66,8 @@ class VerificationControllerTest extends TestCase
             return $route;
         });
 
-        $controller = new VerificationController($this->app->make(UserService::class));
+        $userService = $this->app->make(UserService::class);
+        $controller = new VerificationController($userService);
         $response = $controller->verify($request);
     }
 
@@ -85,7 +87,8 @@ class VerificationControllerTest extends TestCase
             return $route;
         });
 
-        $controller = new VerificationController($this->app->make(UserService::class));
+        $userService = $this->app->make(UserService::class);
+        $controller = new VerificationController($userService);
         $response = $controller->verify($request);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -115,7 +118,8 @@ class VerificationControllerTest extends TestCase
             return $route;
         });
 
-        $controller = new VerificationController($this->app->make(UserService::class));
+        $userService = $this->app->make(UserService::class);
+        $controller = new VerificationController($userService);
         $response = $controller->verify($request);
 
         Event::assertDispatched(Verified::class);
@@ -133,7 +137,8 @@ class VerificationControllerTest extends TestCase
             $mock->shouldReceive('user')->andReturn($user);
         });
         
-        $controller = new VerificationController($this->app->make(UserService::class));
+        $userService = $this->app->make(UserService::class);
+        $controller = new VerificationController($userService);
         $response = $controller->resend($req);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -151,7 +156,8 @@ class VerificationControllerTest extends TestCase
         $req = $this->mock(Request::class, function ($mock) use ($user) {
             $mock->shouldReceive('user')->andReturn($user);
         });
-        $controller = new VerificationController($this->app->make(UserService::class));
+        $userService = $this->app->make(UserService::class);
+        $controller = new VerificationController($userService);
         $response = $controller->resend($req);
 
         $this->assertEquals(403, $response->getStatusCode());
@@ -165,7 +171,8 @@ class VerificationControllerTest extends TestCase
     {
         $this->expectException(AuthorizationException::class);
 
-        $controller = new VerificationController($this->app->make(UserService::class));
+        $userService = $this->app->make(UserService::class);
+        $controller = new VerificationController($userService);
         $response = $controller->resend(new Request());
     }
 }

@@ -107,7 +107,7 @@ class RegisterControllerTest extends TestCase
     /** @test */
     public function it_throws_an_exception_when_it_can_not_create_a_user()
     {
-        /** @var \Mockery\MockInterface|\App\Repositories\Interfaces\UserService */
+        /** @var \Mockery\MockInterface|\App\Contracts\Services\UserService */
         $userRepository = $this->mock(UserService::class, function ($mock) {
             $mock->shouldReceive('create')->once()->andThrow(new \Exception('You shall not pass!', 9001));
         });

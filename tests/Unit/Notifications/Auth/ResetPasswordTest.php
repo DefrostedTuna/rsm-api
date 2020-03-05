@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Notifications;
+namespace Tests\Unit\Notifications\Auth;
 
 use App\Models\User;
 use App\Notifications\Auth\ResetPassword;
