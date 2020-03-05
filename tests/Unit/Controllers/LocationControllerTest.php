@@ -19,7 +19,8 @@ class LocationControllerTest extends TestCase
     {
         $locations = factory(Location::class, 10)->create();
 
-        $locationController = new LocationController($this->app->make(LocationService::class));
+        $locationService = $this->app->make(LocationService::class);
+        $locationController = new LocationController($locationService);
 
         $response = $locationController->index();
 
@@ -31,7 +32,8 @@ class LocationControllerTest extends TestCase
     {
         $location = factory(Location::class)->create();
 
-        $locationController = new LocationController($this->app->make(LocationService::class));
+        $locationService = $this->app->make(LocationService::class);
+        $locationController = new LocationController($locationService);
 
         $response = $locationController->show($location->id);
 
@@ -48,11 +50,12 @@ class LocationControllerTest extends TestCase
             $mock->shouldReceive('validated')->andReturn($location->toArray());
         });
 
-        $locationController = new LocationController($this->app->make(LocationService::class));
+        $locationService = $this->app->make(LocationService::class);
+        $locationController = new LocationController($locationService);
 
         $response = $locationController->store($request);
 
-        $record = (new Location())->first(); // There should only be one record.
+        $record = (new Location())->first();
         
         $this->assertContains($location->toArray(), $response->getData(true));
         $this->assertEquals($record->toArray(), $response->getData(true));
@@ -64,7 +67,7 @@ class LocationControllerTest extends TestCase
         $location = factory(Location::class)->create();
 
         $attributes = [
-            'id'                => $location->id, // To make it easier to compare.
+            'id'                => $location->id,
             'place_id'          => 'someRandomStringFromGoogle',
             'name'              => 'That Exit Along The Highway',
             'locale'            => 'Tampa',
@@ -105,7 +108,8 @@ class LocationControllerTest extends TestCase
             $mock->shouldReceive('validated')->andReturn($attributes);
         });
 
-        $locationController = new LocationController($this->app->make(LocationService::class));
+        $locationService = $this->app->make(LocationService::class);
+        $locationController = new LocationController($locationService);
 
         $response = $locationController->update($request, $location->id);
 
@@ -119,10 +123,11 @@ class LocationControllerTest extends TestCase
     {
         $location = factory(Location::class)->create();
 
-        $locationController = new LocationController($this->app->make(LocationService::class));
+        $locationService = $this->app->make(LocationService::class);
+        $locationController = new LocationController($locationService);
 
         $locationController->destroy($location->id);
 
-        $this->assertDatabaseMissing((new Location())->getTable(), [ 'id' => $location->id ]);
+        $this->assertDatabaseMissing((new Location())->getTable(), ['id' => $location->id]);
     }
 }

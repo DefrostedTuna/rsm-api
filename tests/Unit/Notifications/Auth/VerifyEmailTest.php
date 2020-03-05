@@ -1,16 +1,14 @@
 <?php
 
-namespace Tests\Unit\Listeners;
+namespace Tests\Unit\Notifications\Auth;
 
-use App\Events\Auth\Registered;
-use App\Listeners\Auth\SendEmailVerificationNotification;
 use App\Models\User;
 use App\Notifications\Auth\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
-class SendEmailVerificationNotificationTest extends TestCase
+class VerifyEmailTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -26,8 +24,7 @@ class SendEmailVerificationNotificationTest extends TestCase
             'email_verified_at' => null,
         ]);
 
-        $event = new Registered($user);
-        $listener = (new SendEmailVerificationNotification())->handle($event);
+        $user->notify(new VerifyEmail());
 
         Notification::assertSentTo($user, VerifyEmail::class);
     }
@@ -44,8 +41,7 @@ class SendEmailVerificationNotificationTest extends TestCase
             'email_verified_at' => null,
         ]);
 
-        $event = new Registered($user);
-        $listener = (new SendEmailVerificationNotification())->handle($event);
+        $user->notify(new VerifyEmail());
 
         // The full schema should be the following:
         // https://example.com/email/verify?verificationUrl=https://api.example.com/email/verification/{user}/{hash}?signature={sig}
