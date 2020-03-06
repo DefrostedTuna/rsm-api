@@ -45,10 +45,10 @@ class ResetPasswordControllerTest extends TestCase
         $response = $controller->reset($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals(
-            ['message' => 'Password has successfully reset'],
-            $response->getData(true)
-        );
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Password has successfully reset.',
+        ]);
         Event::assertDispatched(PasswordChanged::class);
     }
 
@@ -86,9 +86,9 @@ class ResetPasswordControllerTest extends TestCase
         $response = $controller->reset($request);
 
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals(
-            ['message' => 'There was a problem resetting the password'],
-            $response->getData(true)
-        );
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'There was a problem resetting the password.',
+        ]);
     }
 }

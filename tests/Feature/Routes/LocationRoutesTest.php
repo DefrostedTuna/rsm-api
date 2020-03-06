@@ -19,7 +19,16 @@ class LocationRoutesTest extends TestCase
         $response = $this->get('/api/locations');
 
         $response->assertStatus(200);
-        $response->assertJsonCount(10);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+        $response->assertJson([
+            'success' => true,
+            'message' => 'Successfully retrieved data.',
+        ]);
+        $response->assertJsonCount(10, 'data');
     }
 
     /** @test */
@@ -30,11 +39,20 @@ class LocationRoutesTest extends TestCase
         $response = $this->get("/api/locations/{$location->id}");
 
         $response->assertStatus(200);
-        $response->assertJson($location->toArray());
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+        $response->assertJson([
+            'success' => true,
+            'message' => 'Successfully retrieved data.',
+            'data' => $location->toArray(),
+        ]);
     }
 
     /** @test */
-    public function it_can_store_a_location() 
+    public function it_can_store_a_location()
     {
         $location = factory(Location::class)->make();
 
@@ -43,8 +61,16 @@ class LocationRoutesTest extends TestCase
         $storedLocation = (new Location())->first();
 
         $response->assertStatus(201);
-        $this->assertEquals($storedLocation->toArray(), $response->getData(true));
-        $response->assertJson($storedLocation->toArray());
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+        $response->assertJson([
+            'success' => true,
+            'message' => 'Successfully created the record.',
+            'data' => $storedLocation->toArray(),
+        ]);
     }
 
     /** @test */
@@ -88,7 +114,16 @@ class LocationRoutesTest extends TestCase
         $storedLocation = (new Location())->first();
 
         $response->assertStatus(200);
-        $response->assertJson($updatedAttributes);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+        $response->assertJson([
+            'success' => true,
+            'message' => 'Successfully updated the record.',
+            'data' => $updatedAttributes,
+        ]);
     }
 
     /** @test */
@@ -98,6 +133,15 @@ class LocationRoutesTest extends TestCase
 
         $response = $this->delete("/api/locations/{$location->id}");
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+        $response->assertJson([
+            'success' => true,
+            'message' => 'Successfully deleted the record.',
+        ]);
 
         $this->assertDatabaseMissing((new Location())->getTable(), [ 'id' => $location->id ]);
     }

@@ -41,10 +41,10 @@ class ForgotPasswordControllerTest extends TestCase
         $response = $controller->sendResetLinkEmail($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals(
-            ['message' => 'A password reset email has been sent'],
-            $response->getData(true)
-        );
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'A password reset email has been sent',
+        ]);
     }
 
     /** @test */
@@ -75,9 +75,9 @@ class ForgotPasswordControllerTest extends TestCase
         $response = $controller->sendResetLinkEmail($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals(
-            ['message' => 'A password reset email has been sent'],
-            $response->getData(true)
-        );
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'A password reset email has been sent',
+        ]);
     }
 }

@@ -50,7 +50,8 @@ class VerificationController extends Controller
 
             if ($user->hasVerifiedEmail()) {
                 return new JsonResponse([
-                    'message' => 'Email has already been verified',
+                    'success' => true,
+                    'message' => 'Email has already been verified.',
                 ], 200);
             }
 
@@ -59,7 +60,8 @@ class VerificationController extends Controller
             }
 
             return new JsonResponse([
-                'message' => 'Email has been successfully verified',
+                'success' => true,
+                'message' => 'Email has been successfully verified.',
             ], 200);
         } catch (\Exception $e) {
             throw new AuthorizationException;
@@ -87,14 +89,16 @@ class VerificationController extends Controller
 
         if ($user->hasVerifiedEmail()) {
             return new JsonResponse([
-                'error' => 'Email has already been verified',
+                'success' => false,
+                'message' => 'Email has already been verified.',
             ], 403);
         }
 
         $user->sendEmailVerificationNotification();
 
         return new JsonResponse([
-            'message' => 'Success',
+            'success' => true,
+            'message' => 'Verification email has been sent.',
         ], 200);
     }
 }

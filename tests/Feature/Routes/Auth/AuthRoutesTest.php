@@ -3,8 +3,10 @@
 namespace Tests\Feature\Routes\Auth;
 
 use App\Contracts\Services\UserService;
+use App\Events\Auth\Registered;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class AuthRoutesTest extends TestCase
@@ -43,9 +45,46 @@ class AuthRoutesTest extends TestCase
         $response = $this->post('/api/register', $userInfo);
         
         $response->assertStatus(200);
-        $this->assertArrayHasKey('access_token', $response->json());
-        $this->assertArrayHasKey('token_type', $response->json());
-        $this->assertArrayHasKey('expires_in', $response->json());
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data' => [
+                'access_token',
+                'token_type',
+                'expires_in',
+            ],
+        ]);
+    }
+
+    /** @test */
+    public function it_fires_the_registered_event_when_a_user_is_created()
+    {
+        // We only want to fake the Registered event.
+        // Faking all events will prevent UUID generation.
+        Event::fake([
+            Registered::class,
+        ]);
+
+        $userInfo = [
+            'username' => 'Artorias',
+            'email' => 'artorias.abysswalker@oolacile.com',
+            'password' => 'GreatGreyWolfSif',
+            'confirm_password' => 'GreatGreyWolfSif',
+        ];
+
+        $response = $this->post('/api/register', $userInfo);
+        
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data' => [
+                'access_token',
+                'token_type',
+                'expires_in',
+            ],
+        ]);
+        Event::assertDispatched(Registered::class);
     }
 
     /** @test */
@@ -68,8 +107,13 @@ class AuthRoutesTest extends TestCase
         $response = $this->post('/api/register', $userInfo);
 
         $response->assertStatus(500);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $response->assertJson([
-            'error' => 'There was an error creating the account',
+            'success' => false,
+            'message' => 'There was an error creating the account.',
         ]);
     }
 
@@ -86,9 +130,15 @@ class AuthRoutesTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertAuthenticated();
-        $this->assertArrayHasKey('access_token', $response->json());
-        $this->assertArrayHasKey('token_type', $response->json());
-        $this->assertArrayHasKey('expires_in', $response->json());
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data' => [
+                'access_token',
+                'token_type',
+                'expires_in',
+            ],
+        ]);
     }
 
     /** @test */
@@ -103,8 +153,13 @@ class AuthRoutesTest extends TestCase
         ]);
 
         $response->assertStatus(401);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $response->assertJson([
-            'error' => 'Unauthorized',
+            'success' => false,
+            'message' => 'Unauthorized.',
         ]);
     }
 
@@ -124,13 +179,18 @@ class AuthRoutesTest extends TestCase
 
         // Invalidate the user.
         $logoutResponse = $this->get('/api/logout', [
-            'Authorization' => "Bearer {$loginResponse->original['access_token']}",
+            'Authorization' => "Bearer {$loginResponse->original['data']['access_token']}",
         ]);
 
         // User should no longer be authenticated.
         $logoutResponse->assertStatus(200);
+        $logoutResponse->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $logoutResponse->assertJson([
-            'message' => 'Success',
+            'success' => true,
+            'message' => 'The user has successfully been logged out.',
         ]);
         $this->isFalse($this->isAuthenticated());
         // TODO: Check to make sure the token is blacklisted?
@@ -155,8 +215,13 @@ class AuthRoutesTest extends TestCase
         $responseSix    = $this->post('/api/login', $userInfo);
 
         $responseSix->assertStatus(400);
+        $responseSix->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $responseSix->assertJson([
-            'error' => 'Too many login attempts',
+            'success' => false,
+            'message' => 'Too many authentication attempts.',
         ]);
         $this->isFalse($this->isAuthenticated());
     }
@@ -167,7 +232,12 @@ class AuthRoutesTest extends TestCase
         $logoutResponse = $this->getJson('/api/logout');
 
         $logoutResponse->assertStatus(401);
+        $logoutResponse->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $logoutResponse->assertJson([
+            'success' => false,
             'message' => 'Token not provided',
         ]);
     }

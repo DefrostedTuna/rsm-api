@@ -25,7 +25,11 @@ class LocationControllerTest extends TestCase
 
         $response = $locationController->index();
 
-        $this->assertCount(10, $response->getData(true));
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Successfully retrieved data.',
+            'data' => $locations->toArray(),
+        ]);
     }
 
     /** @test */
@@ -38,7 +42,11 @@ class LocationControllerTest extends TestCase
 
         $response = $locationController->show($location->id);
 
-        $this->assertEquals($location->toArray(), $response->getData(true));
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Successfully retrieved data.',
+            'data' => $location->toArray(),
+        ]);
     }
 
     /** @test */
@@ -58,7 +66,11 @@ class LocationControllerTest extends TestCase
 
         $record = (new Location())->first();
 
-        $this->assertEquals($record->toArray(), $response->getData(true));
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Successfully created the record.',
+            'data' => $record->toArray(),
+        ]);
     }
 
     /** @test */
@@ -107,9 +119,11 @@ class LocationControllerTest extends TestCase
 
         $response = $locationController->update($request, $location->id);
 
-        $updatedLocation = (new Location())->first();
-
-        $this->assertEquals($attributes, $response->getData(true));
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Successfully updated the record.',
+            'data' => $attributes,
+        ]);
     }
 
     /** @test */
@@ -120,7 +134,13 @@ class LocationControllerTest extends TestCase
         $locationService = $this->app->make(LocationService::class);
         $locationController = new LocationController($locationService);
 
-        $locationController->destroy($location->id);
+        $response = $locationController->destroy($location->id);
+
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Successfully deleted the record.',
+            'data' => true,
+        ]);
 
         $this->assertDatabaseMissing((new Location())->getTable(), ['id' => $location->id]);
     }

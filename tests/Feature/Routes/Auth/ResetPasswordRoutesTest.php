@@ -30,8 +30,13 @@ class ResetPasswordRoutesTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $response->assertJson([
-            'message' => 'Password has successfully reset',
+            'success' => true,
+            'message' => 'Password has successfully reset.',
         ]);
         Event::assertDispatched(PasswordChanged::class);
     }
@@ -51,8 +56,13 @@ class ResetPasswordRoutesTest extends TestCase
         ]);
 
         $response->assertStatus(500);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $response->assertJson([
-            'message' => 'There was a problem resetting the password',
+            'success' => false,
+            'message' => 'There was a problem resetting the password.',
         ]);
         Event::assertNotDispatched(PasswordChanged::class);
     }

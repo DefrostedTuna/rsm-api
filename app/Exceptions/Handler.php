@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
 
 class Handler extends ExceptionHandler
 {
@@ -52,6 +53,13 @@ class Handler extends ExceptionHandler
     {
         if ($request->route() && in_array('api', $request->route()->middleware())) {
             $request->headers->set('Accept', 'application/json');
+        }
+
+        if ($request->expectsJson()) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => $exception->getMessage(),
+            ], $exception->getStatusCode());
         }
 
         return parent::render($request, $exception);

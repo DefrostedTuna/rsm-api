@@ -37,7 +37,7 @@ class LoginController extends Controller
      * Create a new LoginController instance.
      *
      * @param  \App\Contracts\Services\AuthService  $authService
-     * 
+     *
      * @return void
      */
     public function __construct(AuthService $authService)
@@ -70,7 +70,8 @@ class LoginController extends Controller
             $this->fireLockoutEvent($request);
 
             return new JsonResponse([
-                'error' => 'Too many login attempts',
+                'success' => false,
+                'message' => 'Too many authentication attempts.',
             ], 400);
         }
 
@@ -78,14 +79,21 @@ class LoginController extends Controller
             $data = $this->authService->attemptLoginWithCredentials($credentials);
 
             return new JsonResponse([
-                'access_token' => $data['access_token'],
-                'token_type' => 'bearer',
-                'expires_in' => $data['expires_in'],
+                'success' => true,
+                'message' => 'Successfully authenticated.',
+                'data' => [
+                    'access_token' => $data['access_token'],
+                    'token_type' => 'bearer',
+                    'expires_in' => $data['expires_in'],
+                ],
             ], 200);
         } catch (\Exception $e) {
             $this->incrementLoginAttempts($request);
             
-            return new JsonResponse(['error' => 'Unauthorized'], 401);
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Unauthorized.'
+            ], 401);
         }
     }
 
@@ -98,6 +106,9 @@ class LoginController extends Controller
     {
         $this->authService->logout(true);
 
-        return new JsonResponse(['message' => 'Success'], 200);
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'The user has successfully been logged out.',
+        ], 200);
     }
 }
