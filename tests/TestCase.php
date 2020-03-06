@@ -9,7 +9,7 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
 
     /**
-     * Extracts the resolved class name from a given contracts.
+     * Extracts the resolved class name from a given contract.
      *
      * @param  string  $abstract
      *
