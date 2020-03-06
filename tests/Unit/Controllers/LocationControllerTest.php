@@ -3,6 +3,7 @@
 namespace Tests\Unit\Controllers;
 
 use App\Contracts\Services\LocationService;
+use App\Enums\Amenities;
 use App\Http\Controllers\LocationController;
 use App\Http\Requests\CreateLocationFormRequest;
 use App\Http\Requests\UpdateLocationFormRequest;
@@ -56,8 +57,7 @@ class LocationControllerTest extends TestCase
         $response = $locationController->store($request);
 
         $record = (new Location())->first();
-        
-        $this->assertContains($location->toArray(), $response->getData(true));
+
         $this->assertEquals($record->toArray(), $response->getData(true));
     }
 
@@ -80,16 +80,10 @@ class LocationControllerTest extends TestCase
             'direction'         => 'Westbound',
             'status'            => 'Open',
             'condition'         => 'Fair',
-            'potable_water'     => true,
-            'overnight_parking' => true,
+            'amenities'         => [
+                (string) Amenities::OVERNIGHT_PARKING(),
+            ],
             'parking_duration'  => 30,
-            'restrooms'         => true,
-            'family_restroom'   => true,
-            'dump_station'      => false,
-            'pet_area'          => true,
-            'vending'           => true,
-            'security'          => false,
-            'indoor_area'       => true,
             'parking_spaces'    => [
                 'car'           => 40,
                 'truck'         => 30,

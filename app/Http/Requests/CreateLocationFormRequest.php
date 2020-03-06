@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Amenities;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateLocationFormRequest extends FormRequest
 {
@@ -36,16 +38,12 @@ class CreateLocationFormRequest extends FormRequest
             'direction'                     => 'string',
             'status'                        => 'string',
             'condition'                     => 'string',
-            'potable_water'                 => 'boolean',
-            'overnight_parking'             => 'boolean',
+            'amenities'                     => 'array',
+            'amenities.*'                   => [
+                'string',
+                Rule::in(Amenities::toArray())
+            ],
             'parking_duration'              => 'integer',
-            'restrooms'                     => 'boolean',
-            'family_restroom'               => 'boolean',
-            'dump_station'                  => 'boolean',
-            'pet_area'                      => 'boolean',
-            'vending'                       => 'boolean',
-            'security'                      => 'boolean',
-            'indoor_area'                   => 'boolean',
             'parking_spaces'                => 'array',
             'parking_spaces.car'            => 'numeric',
             'parking_spaces.truck'          => 'numeric',
