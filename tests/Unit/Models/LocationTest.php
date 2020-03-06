@@ -7,6 +7,7 @@ use Tests\TestCase;
 
 class LocationTest extends TestCase
 {
+
     /** @test */
     public function it_uses_the_proper_database_table()
     {
@@ -41,16 +42,8 @@ class LocationTest extends TestCase
             'direction',
             'status',
             'condition',
-            'potable_water',
-            'overnight_parking',
+            'amenities',
             'parking_duration',
-            'restrooms',
-            'family_restroom',
-            'dump_station',
-            'pet_area',
-            'vending',
-            'security',
-            'indoor_area',
             'parking_spaces',
             'cell_service',
         ];
@@ -77,16 +70,8 @@ class LocationTest extends TestCase
             'direction',
             'status',
             'condition',
-            'potable_water',
-            'overnight_parking',
+            'amenities',
             'parking_duration',
-            'restrooms',
-            'family_restroom',
-            'dump_station',
-            'pet_area',
-            'vending',
-            'security',
-            'indoor_area',
             'parking_spaces',
             'cell_service',
         ];
@@ -129,16 +114,8 @@ class LocationTest extends TestCase
             'direction'         => 'string',
             'status'            => 'string',
             'condition'         => 'string',
-            'potable_water'     => 'boolean',
-            'overnight_parking' => 'boolean',
+            'amenities'         => 'array',
             'parking_duration'  => 'integer',
-            'restrooms'         => 'boolean',
-            'family_restroom'   => 'boolean',
-            'dump_station'      => 'boolean',
-            'pet_area'          => 'boolean',
-            'vending'           => 'boolean',
-            'security'          => 'boolean',
-            'indoor_area'       => 'boolean',
             'parking_spaces'    => 'array',
             'cell_service'      => 'array',
         ];

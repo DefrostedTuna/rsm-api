@@ -27,16 +27,8 @@ class CreateLocationsTable extends Migration
             $table->string('direction')->nullable();
             $table->string('status')->nullable();
             $table->string('condition')->nullable();
-            $table->boolean('potable_water')->nullable();
-            $table->boolean('overnight_parking')->nullable();
+            $table->json('amenities')->nullable();
             $table->integer('parking_duration')->nullable();
-            $table->boolean('restrooms')->nullable();
-            $table->boolean('family_restroom')->nullable();
-            $table->boolean('dump_station')->nullable();
-            $table->boolean('pet_area')->nullable();
-            $table->boolean('vending')->nullable();
-            $table->boolean('security')->nullable();
-            $table->boolean('indoor_area')->nullable();
             $table->json('parking_spaces')->nullable();
             $table->json('cell_service')->nullable();
 
