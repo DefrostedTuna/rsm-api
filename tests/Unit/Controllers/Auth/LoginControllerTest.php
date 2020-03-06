@@ -26,9 +26,18 @@ class LoginControllerTest extends TestCase
         ]));
 
         $this->assertAuthenticated();
-        $this->assertArrayHasKey('access_token', $response->getData(true));
-        $this->assertArrayHasKey('token_type', $response->getData(true));
-        $this->assertArrayHasKey('expires_in', $response->getData(true));
+        
+        // Super gross looking assertions...
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Successfully authenticated.',
+        ]);
+        $this->assertArrayHasKey('data', $response->getData(true));
+
+        $responseData = $response->getData(true)['data'];
+        $this->assertArrayHasKey('access_token', $responseData);
+        $this->assertArrayHasKey('token_type', $responseData);
+        $this->assertArrayHasKey('access_token', $responseData);
     }
 
     /** @test */
@@ -46,8 +55,10 @@ class LoginControllerTest extends TestCase
         ]));
         
         $this->assertEquals(401, $response->getStatusCode());
-        $this->assertArrayHasKey('error', $response->getData(true));
-        $this->assertEquals('Unauthorized', $response->getData()->error);
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Unauthorized.',
+        ]);
     }
 
     /** @test */

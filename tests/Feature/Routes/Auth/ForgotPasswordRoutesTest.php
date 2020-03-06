@@ -24,8 +24,13 @@ class ForgotPasswordRoutesTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $response->assertJson([
-            'message' => 'A password reset email has been sent',
+            'success' => true,
+            'message' => 'A password reset email has been sent.',
         ]);
         Notification::assertSentTo($user, ResetPassword::class);
     }
@@ -40,8 +45,13 @@ class ForgotPasswordRoutesTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $response->assertJson([
-            'message' => 'A password reset email has been sent',
+            'success' => true,
+            'message' => 'A password reset email has been sent.',
         ]);
         Notification::assertNothingSent();
     }

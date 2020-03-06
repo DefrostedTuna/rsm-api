@@ -36,7 +36,11 @@ class LocationController extends Controller
      */
     public function index(): JsonResponse
     {
-        return new JsonResponse($this->locationService->all(), 200);
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Successfully retrieved data.',
+            'data' => $this->locationService->all(),
+        ], 200);
     }
 
     /**
@@ -48,10 +52,11 @@ class LocationController extends Controller
      */
     public function store(CreateLocationFormRequest $request): JsonResponse
     {
-        return new JsonResponse(
-            $this->locationService->create($request->validated()),
-            201
-        );
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Successfully created the record.',
+            'data' => $this->locationService->create($request->validated()),
+        ], 201);
     }
 
     /**
@@ -63,7 +68,11 @@ class LocationController extends Controller
      */
     public function show(string $locationId): JsonResponse
     {
-        return new JsonResponse($this->locationService->findOrFail($locationId), 200);
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Successfully retrieved data.',
+            'data' => $this->locationService->findOrFail($locationId),
+        ], 200);
     }
 
     /**
@@ -76,13 +85,11 @@ class LocationController extends Controller
      */
     public function update(UpdateLocationFormRequest $request, string $locationId): JsonResponse
     {
-        return new JsonResponse(
-            $this->locationService->update(
-                $locationId,
-                $request->validated()
-            ),
-            200
-        );
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Successfully updated the record.',
+            'data' => $this->locationService->update($locationId, $request->validated()),
+        ], 200);
     }
 
     /**
@@ -94,6 +101,10 @@ class LocationController extends Controller
      */
     public function destroy(string $locationId): JsonResponse
     {
-        return new JsonResponse($this->locationService->delete($locationId), 200);
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Successfully deleted the record.',
+            'data' => $this->locationService->delete($locationId),
+        ], 200);
     }
 }

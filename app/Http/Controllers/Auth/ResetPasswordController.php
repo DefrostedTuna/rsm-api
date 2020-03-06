@@ -73,7 +73,8 @@ class ResetPasswordController extends Controller
     protected function sendResetResponse(): JsonResponse
     {
         return new JsonResponse([
-            'message' => 'Password has successfully reset',
+            'success' => true,
+            'message' => 'Password has successfully reset.',
         ], 200);
     }
 
@@ -85,7 +86,8 @@ class ResetPasswordController extends Controller
     protected function sendResetFailedResponse(): JsonResponse
     {
         return new JsonResponse([
-            'message' => 'There was a problem resetting the password',
+            'success' => false,
+            'message' => 'There was a problem resetting the password.',
         ], 500);
     }
 }

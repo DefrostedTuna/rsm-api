@@ -50,13 +50,18 @@ class RegisterController extends Controller
             $data = $this->authService->attemptLoginWithCredentials($credentials);
 
             return new JsonResponse([
-                'access_token' => $data['access_token'],
-                'token_type' => 'bearer',
-                'expires_in' => $data['expires_in'],
+                'success' => true,
+                'message' => 'Successfully authenticated.',
+                'data' => [
+                    'access_token' => $data['access_token'],
+                    'token_type' => 'bearer',
+                    'expires_in' => $data['expires_in'],
+                ],
             ], 200);
         } catch (\Exception $e) {
             return new JsonResponse([
-                'error' => 'There was an error creating the account',
+                'success' => false,
+                'message' => 'There was an error creating the account.',
             ], 500);
         }
     }

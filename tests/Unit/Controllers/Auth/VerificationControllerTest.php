@@ -40,10 +40,10 @@ class VerificationControllerTest extends TestCase
         $response = $controller->verify($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals(
-            [ 'message' => 'Email has been successfully verified' ],
-            $response->getData(true)
-        );
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Email has been successfully verified.',
+        ]);
     }
 
     /** @test */
@@ -68,7 +68,7 @@ class VerificationControllerTest extends TestCase
 
         $userService = $this->app->make(UserService::class);
         $controller = new VerificationController($userService);
-        $response = $controller->verify($request);
+        $controller->verify($request);
     }
 
     /** @test */
@@ -92,10 +92,10 @@ class VerificationControllerTest extends TestCase
         $response = $controller->verify($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals(
-            [ 'message' => 'Email has already been verified' ],
-            $response->getData(true)
-        );
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Email has already been verified.',
+        ]);
     }
 
     /** @test */
@@ -142,9 +142,10 @@ class VerificationControllerTest extends TestCase
         $response = $controller->resend($req);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals([
-            'message' => 'Success',
-        ], $response->getData(true));
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Verification email has been sent.',
+        ]);
     }
 
     /** @test */
@@ -161,9 +162,10 @@ class VerificationControllerTest extends TestCase
         $response = $controller->resend($req);
 
         $this->assertEquals(403, $response->getStatusCode());
-        $this->assertEquals([
-            'error' => 'Email has already been verified',
-        ], $response->getData(true));
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Email has already been verified.',
+        ]);
     }
 
     /** @test */
@@ -173,6 +175,6 @@ class VerificationControllerTest extends TestCase
 
         $userService = $this->app->make(UserService::class);
         $controller = new VerificationController($userService);
-        $response = $controller->resend(new Request());
+        $controller->resend(new Request());
     }
 }

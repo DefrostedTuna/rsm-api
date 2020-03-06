@@ -8,6 +8,7 @@ use App\Events\Auth\Registered;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Requests\RegisterNewUserFormRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class RegisterControllerTest extends TestCase
@@ -45,7 +46,7 @@ class RegisterControllerTest extends TestCase
     }
 
     /** @test */
-    public function registering_a_new_user_should_return_a_token_1()
+    public function registering_a_new_user_should_return_a_token()
     {
         $userInfo = [
             'username' => 'Artorias',
@@ -68,15 +69,27 @@ class RegisterControllerTest extends TestCase
 
         $response = $registerController->register($request);
 
-        $this->assertArrayHasKey('access_token', $response->getData(true));
-        $this->assertArrayHasKey('token_type', $response->getData(true));
-        $this->assertArrayHasKey('expires_in', $response->getData(true));
+        // Super gross looking assertions...
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'Successfully authenticated.',
+        ]);
+        $this->assertArrayHasKey('data', $response->getData(true));
+
+        $responseData = $response->getData(true)['data'];
+        $this->assertArrayHasKey('access_token', $responseData);
+        $this->assertArrayHasKey('token_type', $responseData);
+        $this->assertArrayHasKey('access_token', $responseData);
     }
 
     /** @test */
     public function it_fires_the_registered_event_when_a_user_is_created()
     {
-        $this->expectsEvents(Registered::class);
+        // We only want to fake the Registered event.
+        // Faking all events will prevent UUID generation.
+        Event::fake([
+            Registered::class,
+        ]);
 
         $userInfo = [
             'username' => 'Artorias',
@@ -99,9 +112,7 @@ class RegisterControllerTest extends TestCase
 
         $response = $registerController->register($request);
 
-        $this->assertArrayHasKey('access_token', $response->getData(true));
-        $this->assertArrayHasKey('token_type', $response->getData(true));
-        $this->assertArrayHasKey('expires_in', $response->getData(true));
+        Event::assertDispatched(Registered::class);
     }
 
     /** @test */
@@ -133,8 +144,10 @@ class RegisterControllerTest extends TestCase
 
         $response = $registerController->register($request);
 
-        $this->assertArrayHasKey('error', $response->getData(true));
-        $this->assertEquals('There was an error creating the account', $response->getData()->error);
         $this->assertEquals(500, $response->getStatusCode());
+        $this->assertContains($response->getData(true), [
+            'success' => true,
+            'message' => 'There was an error creating the account.',
+        ]);
     }
 }

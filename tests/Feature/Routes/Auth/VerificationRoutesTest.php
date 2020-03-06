@@ -43,8 +43,13 @@ class VerificationRoutesTest extends TestCase
         $response = $this->get($user->generateVerificationUrl());
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $response->assertJson([
-            'message' => 'Email has been successfully verified',
+            'success' => true,
+            'message' => 'Email has been successfully verified.',
         ]);
     }
 
@@ -58,7 +63,12 @@ class VerificationRoutesTest extends TestCase
         $response = $this->get($user->generateVerificationUrl() . 'some-extra-data');
 
         $response->assertStatus(403);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $response->assertJson([
+            'success' => false,
             'message' => 'Invalid signature.',
         ]);
     }
@@ -71,8 +81,13 @@ class VerificationRoutesTest extends TestCase
         $response = $this->get($user->generateVerificationUrl());
 
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
         $response->assertJson([
-            'message' => 'Email has already been verified',
+            'success' => true,
+            'message' => 'Email has already been verified.',
         ]);
     }
 
@@ -104,6 +119,15 @@ class VerificationRoutesTest extends TestCase
         $response = $this->post('/api/email/resend', [], [
             'Authorization' => 'Bearer ' . $token,
         ]);
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
+        $response->assertJson([
+            'success' => true,
+            'message' => 'Verification email has been sent.',
+        ]);
 
         Notification::assertSentTo($user, VerifyEmail::class);
     }
@@ -121,6 +145,15 @@ class VerificationRoutesTest extends TestCase
             'Authorization' => 'Bearer ' . $token,
         ]);
 
+        $response->assertStatus(403);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
+        $response->assertJson([
+            'success' => false,
+            'message' => 'Email has already been verified.',
+        ]);
         Notification::assertNotSentTo($user, VerifyEmail::class);
     }
 
@@ -134,7 +167,12 @@ class VerificationRoutesTest extends TestCase
         $response = $this->post('/api/email/resend');
 
         $response->assertStatus(401);
-        $response->assertJsonFragment([
+        $response->assertJsonStructure([
+            'success',
+            'message',
+        ]);
+        $response->assertJson([
+            'success' => false,
             'message' => 'Token not provided',
         ]);
     }
