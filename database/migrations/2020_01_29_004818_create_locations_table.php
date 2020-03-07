@@ -21,8 +21,8 @@ class CreateLocationsTable extends Migration
             $table->string('state')->nullable();
             $table->string('interstate')->nullable();
             $table->string('exit')->nullable();
-            $table->float('lat')->nullable(); // Required for mapping.
-            $table->float('lng')->nullable(); // Required for mapping.
+            $table->decimal('lat', 10, 8); // Required for mapping.
+            $table->decimal('lng', 11, 8); // Required for mapping.
             $table->string('type')->nullable();
             $table->string('direction')->nullable();
             $table->string('status')->nullable();
