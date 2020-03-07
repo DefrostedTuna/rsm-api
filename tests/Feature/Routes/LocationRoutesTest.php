@@ -3,6 +3,7 @@
 namespace Tests\Feature\Routes;
 
 use App\Enums\Amenities;
+use App\Enums\LocationType;
 use App\Models\Location;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -80,7 +81,8 @@ class LocationRoutesTest extends TestCase
 
         $updatedAttributes = [
             'id'                => $location->id, // To make it easier to compare.
-            'place_id'          => 'someRandomStringFromGoogle',
+            'type'              => (string) LocationType::WELCOME_CENTER(),
+            'google_place_id'   => 'someRandomStringFromGoogle',
             'name'              => 'That Exit Along The Highway',
             'locale'            => 'Tampa',
             'state'             => 'Florida',
@@ -88,7 +90,6 @@ class LocationRoutesTest extends TestCase
             'exit'              => '9001',
             'lat'               => 49.112481,
             'lng'               => -112.92718,
-            'type'              => 'Welcome Center',
             'direction'         => 'Westbound',
             'status'            => 'Open',
             'condition'         => 'Fair',

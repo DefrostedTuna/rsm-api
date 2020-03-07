@@ -30,7 +30,8 @@ class LocationTest extends TestCase
         $location = new Location();
 
         $expected = [
-            'place_id',
+            'type',
+            'google_place_id',
             'name',
             'locale',
             'state',
@@ -38,7 +39,6 @@ class LocationTest extends TestCase
             'exit',
             'lat',
             'lng',
-            'type',
             'direction',
             'status',
             'condition',
@@ -58,7 +58,8 @@ class LocationTest extends TestCase
 
         $visibleFields = [
             'id',
-            'place_id',
+            'type',
+            'google_place_id',
             'name',
             'locale',
             'state',
@@ -66,7 +67,6 @@ class LocationTest extends TestCase
             'exit',
             'lat',
             'lng',
-            'type',
             'direction',
             'status',
             'condition',
@@ -102,7 +102,8 @@ class LocationTest extends TestCase
 
         $expected = [
             'id'                => 'string',
-            'place_id'          => 'string',
+            'type'              => 'string',
+            'google_place_id'   => 'string',
             'name'              => 'string',
             'locale'            => 'string',
             'state'             => 'string',
@@ -110,7 +111,6 @@ class LocationTest extends TestCase
             'exit'              => 'string',
             'lat'               => 'double',
             'lng'               => 'double',
-            'type'              => 'string',
             'direction'         => 'string',
             'status'            => 'string',
             'condition'         => 'string',
