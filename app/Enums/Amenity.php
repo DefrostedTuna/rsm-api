@@ -5,17 +5,17 @@ namespace App\Enums;
 use MyCLabs\Enum\Enum;
 
 /**
- * @method static Amenities POTABLE_WATER()
- * @method static Amenities OVERNIGHT_PARKING()
- * @method static Amenities RESTROOMS()
- * @method static Amenities FAMILY_RESTROOM()
- * @method static Amenities DUMP_STATION()
- * @method static Amenities PET_AREA()
- * @method static Amenities VENDING()
- * @method static Amenities SECURITY()
- * @method static Amenities INDOOR_AREA()
+ * @method static Amenity POTABLE_WATER()
+ * @method static Amenity OVERNIGHT_PARKING()
+ * @method static Amenity RESTROOMS()
+ * @method static Amenity FAMILY_RESTROOM()
+ * @method static Amenity DUMP_STATION()
+ * @method static Amenity PET_AREA()
+ * @method static Amenity VENDING()
+ * @method static Amenity SECURITY()
+ * @method static Amenity INDOOR_AREA()
  */
-class Amenities extends Enum
+class Amenity extends Enum
 {
     private const POTABLE_WATER = 'potable_water';
     private const OVERNIGHT_PARKING = 'overnight_parking';

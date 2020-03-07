@@ -3,7 +3,7 @@
 namespace Tests\Unit\Controllers;
 
 use App\Contracts\Services\LocationService;
-use App\Enums\Amenities;
+use App\Enums\Amenity;
 use App\Http\Controllers\LocationController;
 use App\Http\Requests\CreateLocationFormRequest;
 use App\Http\Requests\UpdateLocationFormRequest;
@@ -93,7 +93,7 @@ class LocationControllerTest extends TestCase
             'status'            => 'Open',
             'condition'         => 'Fair',
             'amenities'         => [
-                (string) Amenities::OVERNIGHT_PARKING(),
+                (string) Amenity::OVERNIGHT_PARKING(),
             ],
             'parking_duration'  => 30,
             'parking_spaces'    => [
