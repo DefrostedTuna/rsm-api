@@ -5,11 +5,11 @@ namespace App\Enums;
 use MyCLabs\Enum\Enum;
 
 /**
- * @method static Amenities WELCOME_CENTER()
- * @method static Amenities REST_STOP()
- * @method static Amenities CAMPGROUND()
- * @method static Amenities PARKING_LOT()
- * @method static Amenities TRAVEL_CENTER()
+ * @method static LocationType WELCOME_CENTER()
+ * @method static LocationType REST_STOP()
+ * @method static LocationType CAMPGROUND()
+ * @method static LocationType PARKING_LOT()
+ * @method static LocationType TRAVEL_CENTER()
  */
 class LocationType extends Enum
 {

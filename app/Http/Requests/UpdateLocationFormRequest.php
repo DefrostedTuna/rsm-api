@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\Amenities;
+use App\Enums\Amenity;
 use App\Enums\LocationType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -45,7 +45,7 @@ class UpdateLocationFormRequest extends FormRequest
             'amenities'                     => 'array',
             'amenities.*'                   => [
                 'string',
-                Rule::in(Amenities::toArray()),
+                Rule::in(Amenity::toArray()),
             ],
             'parking_duration'              => 'integer',
             'parking_spaces'                => 'array',

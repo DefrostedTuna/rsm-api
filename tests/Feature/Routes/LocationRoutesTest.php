@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Routes;
 
-use App\Enums\Amenities;
+use App\Enums\Amenity;
 use App\Enums\LocationType;
 use App\Models\Location;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -94,7 +94,7 @@ class LocationRoutesTest extends TestCase
             'status'            => 'Open',
             'condition'         => 'Fair',
             'amenities'         => [
-                (string) Amenities::OVERNIGHT_PARKING(),
+                (string) Amenity::OVERNIGHT_PARKING(),
             ],
             'parking_duration'  => 30,
             'parking_spaces'    => [

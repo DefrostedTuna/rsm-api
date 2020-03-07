@@ -2,14 +2,14 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Enums\Amenities;
+use App\Enums\Amenity;
 use App\Enums\LocationType;
 use App\Models\Location;
 use Faker\Generator as Faker;
 
 $factory->define(Location::class, function (Faker $faker) {
     // A bit gross looking, but this will randomly assign amenities to the model.
-    $amenities = Amenities::toArray();
+    $amenities = Amenity::toArray();
     $numberOfSelectedAmenities = $faker->numberBetween(0, count($amenities));
     $selectedAmenities = [];
 
