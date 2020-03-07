@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\Amenities;
+use App\Enums\LocationType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +27,11 @@ class CreateLocationFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'place_id'                      => 'string',
+            'type'                          => [
+                'string',
+                Rule::in(LocationType::toArray()),
+            ],
+            'google_place_id'               => 'string',
             'name'                          => 'string',
             'locale'                        => 'string',
             'state'                         => 'string',
@@ -34,14 +39,13 @@ class CreateLocationFormRequest extends FormRequest
             'exit'                          => 'string',
             'lat'                           => 'numeric',
             'lng'                           => 'numeric',
-            'type'                          => 'string',
             'direction'                     => 'string',
             'status'                        => 'string',
             'condition'                     => 'string',
             'amenities'                     => 'array',
             'amenities.*'                   => [
                 'string',
-                Rule::in(Amenities::toArray())
+                Rule::in(Amenities::toArray()),
             ],
             'parking_duration'              => 'integer',
             'parking_spaces'                => 'array',

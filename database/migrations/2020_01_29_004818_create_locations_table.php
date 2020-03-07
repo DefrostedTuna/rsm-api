@@ -15,7 +15,8 @@ class CreateLocationsTable extends Migration
     {
         Schema::create('locations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('place_id')->nullable();
+            $table->string('type');
+            $table->string('google_place_id')->nullable();
             $table->string('name')->nullable();
             $table->string('locale')->nullable();
             $table->string('state')->nullable();
@@ -23,7 +24,6 @@ class CreateLocationsTable extends Migration
             $table->string('exit')->nullable();
             $table->decimal('lat', 10, 8); // Required for mapping.
             $table->decimal('lng', 11, 8); // Required for mapping.
-            $table->string('type')->nullable();
             $table->string('direction')->nullable();
             $table->string('status')->nullable();
             $table->string('condition')->nullable();

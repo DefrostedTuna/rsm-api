@@ -3,6 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Enums\Amenities;
+use App\Enums\LocationType;
 use App\Models\Location;
 use Faker\Generator as Faker;
 
@@ -20,7 +21,8 @@ $factory->define(Location::class, function (Faker $faker) {
     }
 
     return [
-        'place_id'          => $faker->uuid,
+        'type'              => $faker->randomElement(LocationType::toArray()),
+        'google_place_id'   => $faker->uuid,
         'name'              => $faker->word,
         'locale'            => $faker->city,
         'state'             => $faker->state,
@@ -28,7 +30,6 @@ $factory->define(Location::class, function (Faker $faker) {
         'exit'              => $faker->numberBetween(1, 999),
         'lat'               => $faker->latitude,
         'lng'               => $faker->longitude,
-        'type'              => $faker->word,
         'direction'         => $faker->word,
         'status'            => $faker->word,
         'condition'         => $faker->word,
