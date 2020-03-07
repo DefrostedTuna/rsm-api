@@ -55,13 +55,35 @@ class Handler extends ExceptionHandler
             $request->headers->set('Accept', 'application/json');
         }
 
+        // dd(get_class($exception));
+
         if ($request->expectsJson()) {
             return new JsonResponse([
                 'success' => false,
                 'message' => $exception->getMessage(),
-            ], $exception->getStatusCode());
+            ], $this->getHttpStatusCode($exception));
         }
 
         return parent::render($request, $exception);
+    }
+
+    /**
+     * Parses the status code associated with the exception.
+     *
+     * @param  \Exception  $e
+     *
+     * @return int
+     */
+    protected function getHttpStatusCode(Exception $e): int
+    {
+        if (method_exists($e, 'getStatusCode')) {
+            $code = $e->getStatusCode();
+        } else if ($e->status && $e->status >= 100) {
+            $code = $e->status;
+        } else {
+            $code = 500;
+        }
+
+        return $code;
     }
 }
