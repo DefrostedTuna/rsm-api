@@ -14,6 +14,9 @@ use MyCLabs\Enum\Enum;
  * @method static Amenity VENDING()
  * @method static Amenity SECURITY()
  * @method static Amenity INDOOR_AREA()
+ * @method static Amenity GRILL()
+ * @method static Amenity FIRE()
+ * @method static Amenity SWIMMING()
  */
 class Amenity extends Enum
 {
@@ -26,4 +29,7 @@ class Amenity extends Enum
     private const VENDING = 'vending';
     private const SECURITY = 'security';
     private const INDOOR_AREA = 'indoor_area';
+    private const GRILL = 'grill';
+    private const FIRE = 'fire';
+    private const SWIMMING = 'swimming';
 }
