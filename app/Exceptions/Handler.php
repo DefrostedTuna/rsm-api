@@ -78,7 +78,10 @@ class Handler extends ExceptionHandler
     protected function getHttpStatusCode(Exception $e): int
     {
         if (method_exists($e, 'getStatusCode')) {
-            $code = $e->getStatusCode();
+            $code = call_user_func([
+                $e,
+                'getStatusCode'
+            ]);
         } elseif ($e->status && $e->status >= 100) {
             $code = $e->status;
         } else {
