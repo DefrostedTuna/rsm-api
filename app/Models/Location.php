@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Location extends Model
 {
     use Uuids;
 
-    /** 
+    /**
      * The table associated with the model.
      *
      * @var string
@@ -85,6 +86,7 @@ class Location extends Model
      * @var array $hidden
      */
     protected $hidden = [
+        'ratings',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -114,4 +116,24 @@ class Location extends Model
         'parking_spaces'    => 'array',
         'cell_service'      => 'array',
     ];
+
+    /**
+     * The Ratings that have been given for the location.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class, 'location_id', 'id');
+    }
+
+    /**
+     * Calculates the average rating associated with the Location.
+     *
+     * @return int
+     */
+    public function avgRating(): int
+    {
+        return $this->ratings()->avg('rating') ?: 0;
+    }
 }

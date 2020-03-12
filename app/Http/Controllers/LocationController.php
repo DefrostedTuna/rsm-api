@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Contracts\Services\LocationService;
 use App\Http\Requests\CreateLocationFormRequest;
 use App\Http\Requests\UpdateLocationFormRequest;
+use App\Http\Resources\Location as LocationResource;
+use App\Http\Resources\LocationCollection as LocationCollectionResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -20,7 +22,7 @@ class LocationController extends Controller
     /**
      * Create a new LocationController instance.
      *
-     * @param \App\Contracts\Services\LocationService $locationService
+     * @param  \App\Contracts\Services\LocationService  $locationService
      *
      * @return void
      */
@@ -39,7 +41,7 @@ class LocationController extends Controller
         return new JsonResponse([
             'success' => true,
             'message' => 'Successfully retrieved data.',
-            'data' => $this->locationService->all(),
+            'data' => new LocationCollectionResource($this->locationService->all(['ratings'])),
         ], 200);
     }
 
@@ -55,7 +57,9 @@ class LocationController extends Controller
         return new JsonResponse([
             'success' => true,
             'message' => 'Successfully created the record.',
-            'data' => $this->locationService->create($request->validated()),
+            'data' => new LocationResource(
+                $this->locationService->create($request->validated())
+            ),
         ], 201);
     }
 
@@ -71,7 +75,7 @@ class LocationController extends Controller
         return new JsonResponse([
             'success' => true,
             'message' => 'Successfully retrieved data.',
-            'data' => $this->locationService->findOrFail($locationId),
+            'data' => new LocationResource($this->locationService->findOrFail($locationId, ['ratings'])),
         ], 200);
     }
 
@@ -88,7 +92,9 @@ class LocationController extends Controller
         return new JsonResponse([
             'success' => true,
             'message' => 'Successfully updated the record.',
-            'data' => $this->locationService->update($locationId, $request->validated()),
+            'data' => new LocationResource(
+                $this->locationService->update($locationId, $request->validated())
+            ),
         ], 200);
     }
 

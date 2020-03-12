@@ -20,7 +20,7 @@ class LocationService implements LocationServiceContract
      * Sets the model to be used throughout the instance.
      *
      * @param  \App\Models\Location  $location
-     * 
+     *
      * @return void
      */
     public function __construct(Location $location)
@@ -46,41 +46,60 @@ class LocationService implements LocationServiceContract
 
     /**
      * Fetches all records in a database table.
+     * Relationships can be loaded dynamically using parameters.
+     *
+     * @param  array  $relations
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function all(): Collection
+    public function all(array $relations = []): Collection
     {
         // If pagination is required, parameters can be passed to a paginate function to indicate how many records to
         // return for each query, while also indicating the page number (or offset)
         // in which to apply the context.
 
-        return $this->model->all();
+        $query = $this->model->newInstance();
+
+        if (! empty($relations) && count($relations) > 0) {
+            $query = $query->with($relations);
+        }
+
+        return $query->get();
     }
 
     /**
      * Finds and returns a record by its primary key.
+     * Relationships can be loaded dynamically using parameters.
      *
      * @param  string  $id
+     * @param  array   $relations
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function findOrFail(string $id): Model
+    public function findOrFail(string $id, array $relations = []): Model
     {
-        return $this->model->findOrFail($id);
+        $query = $this->model->newInstance();
+
+        if (! empty($relations) && count($relations) > 0) {
+            $query = $query->with($relations);
+        }
+
+        return $query->findOrFail($id);
     }
 
     /**
      * Updates a record with the given attribute values.
+     * Relationships can be loaded dynamically using parameters.
      *
      * @param  string  $locationId
      * @param  array   $attributes
+     * @param  array   $relations
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function update(string $locationId, array $attributes): Model
+    public function update(string $locationId, array $attributes, array $relations = []): Model
     {
-        $location = $this->findOrFail($locationId);
+        $location = $this->findOrFail($locationId, $relations);
 
         $location->fill($attributes)->save();
 

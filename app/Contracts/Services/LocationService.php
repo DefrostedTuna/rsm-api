@@ -18,29 +18,36 @@ interface LocationService
 
     /**
      * Fetches all records in a database table.
+     * Relationships can be loaded dynamically using parameters.
+     *
+     * @param  array  $relations
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function all(): Collection;
+    public function all(array $relations = []): Collection;
 
     /**
      * Finds and returns a record by its primary key.
+     * Relationships can be loaded dynamically using parameters.
      *
      * @param  string  $id
+     * @param  array   $relations
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function findOrFail(string $id): Model;
+    public function findOrFail(string $id, array $relations = []): Model;
 
     /**
      * Updates a record with the given attribute values.
+     * Relationships can be loaded dynamically using parameters.
      *
-     * @param  string  $id
+     * @param  string  $locationId
      * @param  array   $attributes
+     * @param  array   $relations
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function update(string $id, array $attributes): Model;
+    public function update(string $locationId, array $attributes, array $relations = []): Model;
 
     /**
      * Deletes a record from the system identified by its primary key.
