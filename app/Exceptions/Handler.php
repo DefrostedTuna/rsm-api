@@ -59,10 +59,16 @@ class Handler extends ExceptionHandler
         }
 
         if ($request->expectsJson()) {
-            return new JsonResponse([
+            $response = [
                 'success' => false,
                 'message' => $exception->getMessage(),
-            ], $this->getHttpStatusCode($exception));
+            ];
+
+            if (method_exists($exception, 'errors')) {
+                $response['errors'] = call_user_func([$exception, 'errors']);
+            }
+
+            return new JsonResponse($response, $this->getHttpStatusCode($exception));
         }
 
         return parent::render($request, $exception);
@@ -82,7 +88,7 @@ class Handler extends ExceptionHandler
                 $e,
                 'getStatusCode'
             ]);
-        } elseif ($e->status && $e->status >= 100) {
+        } elseif (property_exists($e, 'status') && $e->status >= 100) {
             $code = $e->status;
         } else {
             $code = 500;
