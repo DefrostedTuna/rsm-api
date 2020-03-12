@@ -28,3 +28,6 @@ Route::resource('locations', 'LocationController')->only([
     'update',
     'destroy',
 ]);
+
+Route::post('/locations/{location_id}/ratings')->uses('RatingController@store')->name('locations.ratings.store')
+    ->middleware('auth');

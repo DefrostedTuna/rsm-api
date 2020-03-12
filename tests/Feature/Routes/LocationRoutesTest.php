@@ -5,6 +5,8 @@ namespace Tests\Feature\Routes;
 use App\Enums\Amenity;
 use App\Enums\LocationType;
 use App\Models\Location;
+use App\Models\Rating;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -145,5 +147,49 @@ class LocationRoutesTest extends TestCase
         ]);
 
         $this->assertDatabaseMissing((new Location())->getTable(), [ 'id' => $location->id ]);
+    }
+
+    /** @test */
+    public function it_will_retrieve_the_average_rating_and_total_count_when_all_records_are_fetched()
+    {
+        $user = factory(User::class)->create();
+        $location = factory(Location::class)->create();
+        $rating = factory(Rating::class)->create([
+            'user_id' => $user->id,
+            'location_id' => $location->id,
+            'rating' => 3,
+        ]);
+
+        $response = $this->get('/api/locations');
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'rating' => [
+                'avg' => 3,
+                'count' => 1,
+            ],
+        ]);
+    }
+
+    /** @test */
+    public function it_will_retrieve_the_average_rating_and_total_count_when_a_record_is_fetched()
+    {
+        $user = factory(User::class)->create();
+        $location = factory(Location::class)->create();
+        $rating = factory(Rating::class)->create([
+            'user_id' => $user->id,
+            'location_id' => $location->id,
+            'rating' => 3,
+        ]);
+
+        $response = $this->get("/api/locations/{$location->id}");
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'rating' => [
+                'avg' => 3,
+                'count' => 1,
+            ],
+        ]);
     }
 }

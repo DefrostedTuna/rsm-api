@@ -3,6 +3,8 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Location;
+use App\Models\Rating;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Tests\TestCase;
 
 class LocationTest extends TestCase
@@ -85,6 +87,7 @@ class LocationTest extends TestCase
         $location = new Location();
 
         $hiddenFields = [
+            'ratings',
             'created_at',
             'updated_at',
             'deleted_at',
@@ -121,5 +124,14 @@ class LocationTest extends TestCase
         ];
 
         $this->assertEquals($expected, $fields);
+    }
+
+    /** @test */
+    public function it_has_ratings()
+    {
+        $location = new Location();
+
+        $this->assertInstanceOf(HasMany::class, $location->ratings());
+        $this->assertInstanceOf(Rating::class, $location->ratings()->getRelated());
     }
 }

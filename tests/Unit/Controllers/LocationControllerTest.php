@@ -8,6 +8,8 @@ use App\Http\Controllers\LocationController;
 use App\Http\Requests\CreateLocationFormRequest;
 use App\Http\Requests\UpdateLocationFormRequest;
 use App\Models\Location;
+use App\Models\Rating;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -143,5 +145,53 @@ class LocationControllerTest extends TestCase
         ]);
 
         $this->assertDatabaseMissing((new Location())->getTable(), ['id' => $location->id]);
+    }
+
+    /** @test */
+    public function it_will_retrieve_the_average_rating_and_total_count_when_all_records_are_fetched()
+    {
+        $user = factory(User::class)->create();
+        $location = factory(Location::class)->create();
+        $rating = factory(Rating::class)->create([
+            'user_id' => $user->id,
+            'location_id' => $location->id,
+            'rating' => 3,
+        ]);
+
+        $locationService = $this->app->make(LocationService::class);
+        $locationController = new LocationController($locationService);
+
+        $response = $locationController->index();
+        
+        $data = $response->getData(true)['data'][0];
+        $this->assertArrayHasKey('rating', $data);
+        $this->assertContains([
+            'avg' => 3, // There is only one rating so it will average to this.
+            'count' => 1,
+        ], $data);
+    }
+
+    /** @test */
+    public function it_will_retrieve_the_average_rating_and_total_count_when_a_record_is_fetched()
+    {
+        $user = factory(User::class)->create();
+        $location = factory(Location::class)->create();
+        $rating = factory(Rating::class)->create([
+            'user_id' => $user->id,
+            'location_id' => $location->id,
+            'rating' => 3,
+        ]);
+
+        $locationService = $this->app->make(LocationService::class);
+        $locationController = new LocationController($locationService);
+
+        $response = $locationController->show($location->id);
+        
+        $data = $response->getData(true)['data'];
+        $this->assertArrayHasKey('rating', $data);
+        $this->assertContains([
+            'avg' => 3, // There is only one rating so it will average to this.
+            'count' => 1,
+        ], $data);
     }
 }

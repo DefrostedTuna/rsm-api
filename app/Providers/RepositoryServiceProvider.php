@@ -28,6 +28,10 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Services\LocationService::class,
         );
         
+        $this->app->bind(
+            \App\Contracts\Services\RatingService::class,
+            \App\Services\RatingService::class,
+        );
     }
 
     /**
